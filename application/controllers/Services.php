@@ -17,8 +17,9 @@ class Services extends CI_Controller
 /**
 * LINK PREVIEWER start
 */
+
 	// MAIN METHOD
-	public function link_previewer_api($url){
+	public function link_previewer_api($url = ''){
 		$data_website = array(); // begin
 
 		// terima $url dengan meng-replace "garis_miring" menjadi /
@@ -31,38 +32,40 @@ class Services extends CI_Controller
 
 		$url = base64_decode($url);
 		$data_website['URL_SUMBER'] = $url;
-		// get meta tags
-		if ( !get_meta_tags( $url ) ) {
 
-			$data_website['status'] = "gagal";
-			$data_website['meta_tags'] = ''; // inisialisasi biar ga error di JS nanti
+		// get web page title
+		$data_website['page_title'] = $this->LinkPreviewerModel->getTitle( $url );
 
-			// final output
-			$json = json_encode($data_website);
-			echo $json;
+		// get target's content
+		$html = $this->LinkPreviewerModel->url_get_contents( $url );
+
+		// echo $html;
+		// echo "<br>";
+		// echo strlen($html);
+		// die();
+		// validation
+		if ( !$url OR !$html OR strpos($html, "<title>404 Not Found</title>") AND strlen($html) < 600 ) { 
+
+			$data_website['status'] = "fail";
+
 		}
 		else{
-			$meta_tags = get_meta_tags( $url );
 
+			// libxml_use_internal_errors(true); // Yeah if you are so worried about using @ with warnings
+			// $doc = new DomDocument();
+			// $doc->loadHTML($html);
+			// $xpath = new DOMXPath($doc);
+			// $query = '//*/meta[starts-with(@property, \'og:\')]';
+			// $metas = $xpath->query($query);
+			// foreach ($metas as $meta) {
+			//     $property = $meta->getAttribute('property');
+			//     $content = $meta->getAttribute('content');
+			//     $data_website[$property] = $content;
+			// }
 
-			// get og components
-			$html = $this->LinkPreviewerModel->url_get_contents( $url );
-
-			libxml_use_internal_errors(true); // Yeah if you are so worried about using @ with warnings
-			$doc = new DomDocument();
-			$doc->loadHTML($html);
-			$xpath = new DOMXPath($doc);
-			$query = '//*/meta[starts-with(@property, \'og:\')]';
-			$metas = $xpath->query($query);
-
-			foreach ($metas as $meta) {
-			    $property = $meta->getAttribute('property'); // hilangkan "og:" biar objek json nya bisa diakses
-			    $content = $meta->getAttribute('content');
-			    $data_website[$property] = $content;
-			}
-
-			// get web page title
-			$data_website['page_title'] = $this->LinkPreviewerModel->getTitle( $url );
+			// $meta_tags = '';
+			$meta_tags_mentah = $this->LinkPreviewerModel->getMetaTags( $html );
+			
 
 			// mengganti index yang mengandung : dengan _ agar bisa diakses memakai JavaScript
 			$data_website = $this->LinkPreviewerModel->menyaring_keys_index( $data_website );
@@ -75,21 +78,21 @@ class Services extends CI_Controller
 			    $data_website['media_thumbnail'] = $images;
 			}
 
-			$data_website['status'] = "berhasil";
+			$data_website['status'] = "success";
 
-			if ( $meta_tags ) {
+			if ( $meta_tags_mentah ) {
 				// mengganti index yang mengandung : dengan _ agar bisa diakses memakai JavaScript
-				$meta_tags = $this->LinkPreviewerModel->menyaring_keys_index( $meta_tags );
-				$data_website['meta_tags'] = $meta_tags;
+				$meta_tags = $this->LinkPreviewerModel->menyaring_keys_index( $meta_tags_mentah );
+				$data_website = array_merge( $data_website, $meta_tags );
 			}else{
-				$data_website['meta_tags'] = ''; // inisialisasi biar ga error di JS nanti
+				$data_website = ''; // inisialisasi biar ga error di JS nanti
 			}
 			
-
-			// final output
-			$json = json_encode($data_website);
-			echo $json;
 		}
+
+		// final output
+		$json = json_encode($data_website);
+		echo $json;
 	}
 /**
 * LINK PREVIEWER end

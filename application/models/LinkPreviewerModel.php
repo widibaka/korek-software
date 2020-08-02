@@ -429,6 +429,35 @@ class LinkPreviewerModel extends CI_Model
 		}
 		return array_combine( $rmetas_keys, $rmetas_values );
 	}
+	public function getMetaTags($str)
+	{
+	  $pattern = '
+	  ~<\s*meta\s
+
+	  # using lookahead to capture type to $1
+	    (?=[^>]*?
+	    \b(?:name|property|http-equiv)\s*=\s*
+	    (?|"\s*([^"]*?)\s*"|\'\s*([^\']*?)\s*\'|
+	    ([^"\'>]*?)(?=\s*/?\s*>|\s\w+\s*=))
+	  )
+
+	  # capture content to $2
+	  [^>]*?\bcontent\s*=\s*
+	    (?|"\s*([^"]*?)\s*"|\'\s*([^\']*?)\s*\'|
+	    ([^"\'>]*?)(?=\s*/?\s*>|\s\w+\s*=))
+	  [^>]*>
+
+	  ~ix';
+	 
+	  if(preg_match_all($pattern, $str, $out)){
+	  	for ($i=0; $i < count($out[1]); $i++) { 
+	  		$property = $out[1][$i];
+	  	    $content = $out[2][$i];
+	  	    return array_combine($out[1], $out[2]);
+	  	}
+	  }
+	  return array();
+	}
 	/*
 	* MEMPROSES META DATA WEBSITE
 	*/

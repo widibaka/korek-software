@@ -175,7 +175,7 @@ class LinkPreviewerModel extends CI_Model
 	    if (preg_match("/(.*?)v=(.*?)($|&)/i", $url, $matching)) {
 	        $vid = $matching[2];
 	        array_push($media, "http://i2.ytimg.com/vi/{$vid}/hqdefault.jpg");
-	        array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $vid . '" class="embed-responsive-item" width="499" height="368" src="http://www.youtube.com/embed/' . $vid . '" frameborder="0" allowfullscreen></iframe></div>');
+	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $vid . '" class="embed-responsive-item" width="499" height="368" src="http://www.youtube.com/embed/' . $vid . '" frameborder="0" allowfullscreen></iframe></div>');
 	    } else {
 	        array_push($media, "", "");
 	    }
@@ -193,7 +193,7 @@ class LinkPreviewerModel extends CI_Model
 	        if (count($url) > 0) {
 	            $url = $url[0];
 	            $embed = '<iframe src="https://embed-ssl.ted.com/talks/' . $url . '.html" width="640" height="360" frameborder="0" scrolling="no" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
-	            array_push($media, "", '<div class="embed-responsive embed-responsive-16by9">' . $embed . '</div>');
+	            // array_push($media, "", '<div class="embed-responsive embed-responsive-16by9">' . $embed . '</div>');
 	        } else {
 	            array_push($media, "", "");
 	        }
@@ -213,7 +213,7 @@ class LinkPreviewerModel extends CI_Model
 	    if ($breakUrl[2] != "") {
 	        $vid = $breakUrl[2];
 	        array_push($media, $this->mediaVineThumb($vid));
-	        array_push($media, '<div class="embed-responsive embed-responsive-16by9 lp-vine-fix"><iframe id="' . date("YmdHis") . $vid . '" class="vine-embed embed-responsive-item" src="https://vine.co/v/' . $vid . '/embed/simple" width="499" height="499" frameborder="0"></iframe></div><script async src="//platform.vine.co/static/scripts/embed.js" charset="utf-8"></script>');
+	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9 lp-vine-fix"><iframe id="' . date("YmdHis") . $vid . '" class="vine-embed embed-responsive-item" src="https://vine.co/v/' . $vid . '/embed/simple" width="499" height="499" frameborder="0"></iframe></div><script async src="//platform.vine.co/static/scripts/embed.js" charset="utf-8"></script>');
 	    } else {
 	        array_push($media, "", "");
 	    }
@@ -239,7 +239,7 @@ class LinkPreviewerModel extends CI_Model
 	        $imgId = $breakUrl[1];
 	        $hash = unserialize(file_get_contents("http://vimeo.com/api/v2/video/$imgId.php"));
 	        array_push($media, $hash[0]['thumbnail_large']);
-	        array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $imgId . '" class="embed-responsive-item" width="499" height="280" src="http://player.vimeo.com/video/' . $imgId . '" width="654" height="368" frameborder="0" webkitallowfullscreen mozallowfullscreen allowFullScreen ></iframe></div>');
+	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $imgId . '" class="embed-responsive-item" width="499" height="280" src="http://player.vimeo.com/video/' . $imgId . '" width="654" height="368" frameborder="0" webkitallowfullscreen mozallowfullscreen allowFullScreen ></iframe></div>');
 	    } else {
 	        array_push($media, "", "");
 	    }
@@ -255,7 +255,7 @@ class LinkPreviewerModel extends CI_Model
 	        $vid = $matching[1];
 	        $vtitle = trim($matching[2], "/");
 	        array_push($media, "http://s4.mcstatic.com/thumb/{$vid}/0/6/videos/0/6/{$vtitle}.jpg");
-	        array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $vid . '" class="embed-responsive-item" width="499" height="368" src="http://www.metacafe.com/embed/' . $vid . '" allowFullScreen frameborder=0></iframe></div>');
+	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $vid . '" class="embed-responsive-item" width="499" height="368" src="http://www.metacafe.com/embed/' . $vid . '" allowFullScreen frameborder=0></iframe></div>');
 	    } else {
 	        array_push($media, "", "");
 	    }
@@ -273,7 +273,7 @@ class LinkPreviewerModel extends CI_Model
 	        //array_push($media, $hash['thumbnail_url']);
 
 	        array_push($media, "http://www.dailymotion.com/thumbnail/160x120/video/$id");
-	        array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $id . '" class="embed-responsive-item" width="499" height="368" src="http://www.dailymotion.com/embed/video/' . $id . '" allowFullScreen frameborder=0></iframe></div>');
+	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $id . '" class="embed-responsive-item" width="499" height="368" src="http://www.dailymotion.com/embed/video/' . $id . '" allowFullScreen frameborder=0></iframe></div>');
 	    } else {
 	        array_push($media, "", "");
 	    }
@@ -290,7 +290,7 @@ class LinkPreviewerModel extends CI_Model
 	        $hash = file_get_contents("http://www.collegehumor.com/oembed.json?url=http://www.dailymotion.com/embed/video/$id");
 	        $hash = json_decode($hash, true);
 	        array_push($media, $hash['thumbnail_url']);
-	        array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $id . '" class="embed-responsive-item" width="499" height="368" src="http://www.collegehumor.com/e/' . $id . '" allowFullScreen frameborder=0></iframe></div>');
+	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $id . '" class="embed-responsive-item" width="499" height="368" src="http://www.collegehumor.com/e/' . $id . '" allowFullScreen frameborder=0></iframe></div>');
 	    } else {
 	        array_push($media, "", "");
 	    }
@@ -308,7 +308,7 @@ class LinkPreviewerModel extends CI_Model
 	        preg_match('/<iframe.*src=\"(.*)\".*><\/iframe>/isU', $hash['html'], $matching);
 	        $src = $matching[1];
 	        array_push($media, $hash['thumbnail_url']);
-	        array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . 'blip" class="embed-responsive-item" width="499" height="368" src="' . $src . '" allowFullScreen frameborder=0></iframe></div>');
+	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . 'blip" class="embed-responsive-item" width="499" height="368" src="' . $src . '" allowFullScreen frameborder=0></iframe></div>');
 	    } else {
 	        array_push($media, "", "");
 	    }
@@ -325,7 +325,7 @@ class LinkPreviewerModel extends CI_Model
 	        preg_match('/<iframe.*src=\"(.*)\".*><\/iframe>/isU', $hash['html'], $matching);
 	        $src = $matching[1];
 	        array_push($media, $hash['thumbnail_url']);
-	        array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . 'funnyordie" class="embed-responsive-item" width="499" height="368" src="' . $src . '" allowFullScreen frameborder=0></iframe></div>');
+	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . 'funnyordie" class="embed-responsive-item" width="499" height="368" src="' . $src . '" allowFullScreen frameborder=0></iframe></div>');
 	    } else {
 	        array_push($media, "", "");
 	    }
@@ -361,5 +361,75 @@ class LinkPreviewerModel extends CI_Model
 
 	/*
 	* MEDIA THUMBNAIL
+	*/
+
+	/*
+	* MEMPROSES META DATA WEBSITE
+	*/
+	public function url_get_contents($url, $useragent='cURL', $headers=false, $follow_redirects=true, $debug=false) {
+
+	    // initialise the CURL library
+	    $ch = curl_init();
+
+	    // specify the URL to be retrieved
+	    curl_setopt($ch, CURLOPT_URL,$url);
+
+	    // we want to get the contents of the URL and store it in a variable
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+
+	    // specify the useragent: this is a required courtesy to site owners
+	    curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
+
+	    // ignore SSL errors
+	    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+	    // return headers as requested
+	    if ($headers==true){
+	        curl_setopt($ch, CURLOPT_HEADER,1);
+	    }
+
+	    // only return headers
+	    if ($headers=='headers only') {
+	        curl_setopt($ch, CURLOPT_NOBODY ,1);
+	    }
+
+	    // follow redirects - note this is disabled by default in most PHP installs from 4.4.4 up
+	    if ($follow_redirects==true) {
+	        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); 
+	    }
+
+	    // if debugging, return an array with CURL's debug info and the URL contents
+	    if ($debug==true) {
+	        $result['contents']=curl_exec($ch);
+	        $result['info']=curl_getinfo($ch);
+	    }
+
+	    // otherwise just return the contents as a variable
+	    else $result=curl_exec($ch);
+
+	    // free resources
+	    curl_close($ch);
+
+	    // send back the data
+	    return $result;
+	}
+	// function to get webpage title
+	public function getTitle($url) {
+	    $page = $this->url_get_contents($url);
+	    $title = preg_match('/<title[^>]*>(.*?)<\/title>/ims', $page, $match) ? $match[1] : null;
+	    return $title;
+	}
+	// mengganti index yang mengandung : dengan _ agar bisa diakses memakai JavaScript
+	public function menyaring_keys_index($rmetas)
+	{
+		$rmetas_keys = array_keys( $rmetas ); // memisahkan keys
+		$rmetas_values = array_values( $rmetas ); // memisahkan values
+		foreach ($rmetas_keys as $key => $value) {
+			$rmetas_keys[$key] = str_replace(":", "_", $value);
+		}
+		return array_combine( $rmetas_keys, $rmetas_values );
+	}
+	/*
+	* MEMPROSES META DATA WEBSITE
 	*/
 }

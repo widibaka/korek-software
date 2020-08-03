@@ -164,22 +164,119 @@ class LinkPreviewerModel extends CI_Model
     }
 
 
+    /*
+    * MEMPROSES META DATA WEBSITE
+    */
+    public function url_get_contents($url, $useragent='cURL', $headers=false, $follow_redirects=true, $debug=false) {
+
+        // initialise the CURL library
+        $ch = curl_init();
+
+        // specify the URL to be retrieved
+        curl_setopt($ch, CURLOPT_URL,$url);
+
+        // we want to get the contents of the URL and store it in a variable
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+
+        // specify the useragent: this is a required courtesy to site owners
+        curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
+
+        // ignore SSL errors
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+        // return headers as requested
+        if ($headers==true){
+            curl_setopt($ch, CURLOPT_HEADER,1);
+        }
+
+        // only return headers
+        if ($headers=='headers only') {
+            curl_setopt($ch, CURLOPT_NOBODY ,1);
+        }
+
+        // follow redirects - note this is disabled by default in most PHP installs from 4.4.4 up
+        if ($follow_redirects==true) {
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); 
+        }
+
+        // if debugging, return an array with CURL's debug info and the URL contents
+        if ($debug==true) {
+            $result['contents']=curl_exec($ch);
+            $result['info']=curl_getinfo($ch);
+        }
+
+        // otherwise just return the contents as a variable
+        else $result=curl_exec($ch);
+
+        // free resources
+        curl_close($ch);
+
+        // send back the data
+        return $result;
+    }
+    // function to get webpage title
+    public function getTitle($url) {
+        $page = $this->url_get_contents($url);
+        $title = preg_match('/<title[^>]*>(.*?)<\/title>/ims', $page, $match) ? $match[1] : null;
+        return $title;
+    }
+    // mengganti index yang mengandung : dengan _ agar bisa diakses memakai JavaScript
+    public function menyaring_keys_index($rmetas)
+    {
+    	$rmetas_keys = array_keys( $rmetas ); // memisahkan keys
+    	$rmetas_values = array_values( $rmetas ); // memisahkan values
+    	foreach ($rmetas_keys as $key => $value) {
+    		$rmetas_keys[$key] = str_replace(":", "_", $value);
+    	}
+    	return array_combine( $rmetas_keys, $rmetas_values );
+    }
+    public function getMetaTags($str)
+    {
+      $pattern = '
+      ~<\s*meta\s
+
+      # using lookahead to capture type to $1
+        (?=[^>]*?
+        \b(?:name|property|http-equiv)\s*=\s*
+        (?|"\s*([^"]*?)\s*"|\'\s*([^\']*?)\s*\'|
+        ([^"\'>]*?)(?=\s*/?\s*>|\s\w+\s*=))
+      )
+
+      # capture content to $2
+      [^>]*?\bcontent\s*=\s*
+        (?|"\s*([^"]*?)\s*"|\'\s*([^\']*?)\s*\'|
+        ([^"\'>]*?)(?=\s*/?\s*>|\s\w+\s*=))
+      [^>]*>
+
+      ~ix';
+     
+      if(preg_match_all($pattern, $str, $out)){
+      	for ($i=0; $i < count($out[1]); $i++) { 
+      		$property = $out[1][$i];
+      	    $content = $out[2][$i];
+      	    return array_combine($out[1], $out[2]);
+      	}
+      }
+      return array();
+    }
+    /*
+    * MEMPROSES META DATA WEBSITE
+    */
+
+
 	/*
 	* MEDIA THUMBNAIL
 	*/
 
 	/** Return iframe code for Youtube videos */
-	static function mediaYoutube($url)
+	static function mediaYoutube($url, $api_key)
 	{
-	    $media = array();
+		$vid = false;
 	    if (preg_match("/(.*?)v=(.*?)($|&)/i", $url, $matching)) {
 	        $vid = $matching[2];
-	        array_push($media, "http://i2.ytimg.com/vi/{$vid}/hqdefault.jpg");
 	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $vid . '" class="embed-responsive-item" width="499" height="368" src="http://www.youtube.com/embed/' . $vid . '" frameborder="0" allowfullscreen></iframe></div>');
-	    } else {
-	        array_push($media, "", "");
 	    }
-	    return $media;
+	    return $vid;
 	}
 
 	/** Return iframe code for TED videos */
@@ -337,9 +434,7 @@ class LinkPreviewerModel extends CI_Model
 	function getMedia($pageUrl)
 	{
 	    $media = array();
-	    if (strpos($pageUrl, "youtube.com") !== false) {
-	        $media = $this->mediaYoutube($pageUrl);
-	    } else if (strpos($pageUrl, "ted.com") !== false) {
+	    if (strpos($pageUrl, "ted.com") !== false) {
 	        $media = $this->mediaTED($pageUrl);
 	    } else if (strpos($pageUrl, "vimeo.com") !== false) {
 	        $media = $this->mediaVimeo($pageUrl);
@@ -363,102 +458,5 @@ class LinkPreviewerModel extends CI_Model
 	* MEDIA THUMBNAIL
 	*/
 
-	/*
-	* MEMPROSES META DATA WEBSITE
-	*/
-	public function url_get_contents($url, $useragent='cURL', $headers=false, $follow_redirects=true, $debug=false) {
 
-	    // initialise the CURL library
-	    $ch = curl_init();
-
-	    // specify the URL to be retrieved
-	    curl_setopt($ch, CURLOPT_URL,$url);
-
-	    // we want to get the contents of the URL and store it in a variable
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-
-	    // specify the useragent: this is a required courtesy to site owners
-	    curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
-
-	    // ignore SSL errors
-	    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-	    // return headers as requested
-	    if ($headers==true){
-	        curl_setopt($ch, CURLOPT_HEADER,1);
-	    }
-
-	    // only return headers
-	    if ($headers=='headers only') {
-	        curl_setopt($ch, CURLOPT_NOBODY ,1);
-	    }
-
-	    // follow redirects - note this is disabled by default in most PHP installs from 4.4.4 up
-	    if ($follow_redirects==true) {
-	        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); 
-	    }
-
-	    // if debugging, return an array with CURL's debug info and the URL contents
-	    if ($debug==true) {
-	        $result['contents']=curl_exec($ch);
-	        $result['info']=curl_getinfo($ch);
-	    }
-
-	    // otherwise just return the contents as a variable
-	    else $result=curl_exec($ch);
-
-	    // free resources
-	    curl_close($ch);
-
-	    // send back the data
-	    return $result;
-	}
-	// function to get webpage title
-	public function getTitle($url) {
-	    $page = $this->url_get_contents($url);
-	    $title = preg_match('/<title[^>]*>(.*?)<\/title>/ims', $page, $match) ? $match[1] : null;
-	    return $title;
-	}
-	// mengganti index yang mengandung : dengan _ agar bisa diakses memakai JavaScript
-	public function menyaring_keys_index($rmetas)
-	{
-		$rmetas_keys = array_keys( $rmetas ); // memisahkan keys
-		$rmetas_values = array_values( $rmetas ); // memisahkan values
-		foreach ($rmetas_keys as $key => $value) {
-			$rmetas_keys[$key] = str_replace(":", "_", $value);
-		}
-		return array_combine( $rmetas_keys, $rmetas_values );
-	}
-	public function getMetaTags($str)
-	{
-	  $pattern = '
-	  ~<\s*meta\s
-
-	  # using lookahead to capture type to $1
-	    (?=[^>]*?
-	    \b(?:name|property|http-equiv)\s*=\s*
-	    (?|"\s*([^"]*?)\s*"|\'\s*([^\']*?)\s*\'|
-	    ([^"\'>]*?)(?=\s*/?\s*>|\s\w+\s*=))
-	  )
-
-	  # capture content to $2
-	  [^>]*?\bcontent\s*=\s*
-	    (?|"\s*([^"]*?)\s*"|\'\s*([^\']*?)\s*\'|
-	    ([^"\'>]*?)(?=\s*/?\s*>|\s\w+\s*=))
-	  [^>]*>
-
-	  ~ix';
-	 
-	  if(preg_match_all($pattern, $str, $out)){
-	  	for ($i=0; $i < count($out[1]); $i++) { 
-	  		$property = $out[1][$i];
-	  	    $content = $out[2][$i];
-	  	    return array_combine($out[1], $out[2]);
-	  	}
-	  }
-	  return array();
-	}
-	/*
-	* MEMPROSES META DATA WEBSITE
-	*/
 }

@@ -269,12 +269,14 @@ class LinkPreviewerModel extends CI_Model
 	*/
 
 	/** Return iframe code for Youtube videos */
-	static function mediaYoutube($url, $api_key)
+	static function mediaYoutube($url)
 	{
 		$vid = false;
-	    if (preg_match("/(.*?)v=(.*?)($|&)/i", $url, $matching)) {
-	        $vid = $matching[2];
-	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $vid . '" class="embed-responsive-item" width="499" height="368" src="http://www.youtube.com/embed/' . $vid . '" frameborder="0" allowfullscreen></iframe></div>');
+	    if ( strpos( $url , "youtube.com") !== false ) {
+	    	if (preg_match("/(.*?)v=(.*?)($|&)/i", $url, $matching)) {
+	    	    $vid = $matching[2];
+	    	    // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $vid . '" class="embed-responsive-item" width="499" height="368" src="http://www.youtube.com/embed/' . $vid . '" frameborder="0" allowfullscreen></iframe></div>');
+	    	}
 	    }
 	    return $vid;
 	}
@@ -451,7 +453,9 @@ class LinkPreviewerModel extends CI_Model
 	    } else if (strpos($pageUrl, "funnyordie.com") !== false) {
 	        $media = $this->mediaFunnyordie($pageUrl);
 	    }
-	    return $media;
+	    if ( !empty($media) ) {
+	    	return $media;
+	    }
 	}
 
 	/*

@@ -21,6 +21,7 @@ class Services extends CI_Controller
 	// MAIN METHOD
 	public function link_previewer_api($url = ''){
 
+
 		$youtube_api_key = "AIzaSyCwsoXvuNvZ-nQv2X0MvWAd8ks1gWJM_Y0";
 
 		$data_website = array(); // begin
@@ -34,7 +35,7 @@ class Services extends CI_Controller
 		    $url = str_replace("https://", "https://www.", $url);
 
 		$url = base64_decode($url);
-		$data_website['URL_SUMBER'] = $url;
+		$data_website['source_url'] = $url;
 
 		// get web page title
 		$data_website['page_title'] = $this->LinkPreviewerModel->getTitle( $url );
@@ -75,29 +76,6 @@ class Services extends CI_Controller
 			// mengganti index yang mengandung : dengan _ agar bisa diakses memakai JavaScript
 			$data_website = $this->LinkPreviewerModel->menyaring_keys_index( $data_website );
 
-			
-			if ( strpos( $url , "youtube.com") !== false ) {
-				# Untuk youtube, harus memakai API khusus dan tidak bisa mengambil dari situsnya langsung karena diproteksi
-		        $vid = $this->LinkPreviewerModel->mediaYoutube($url, $youtube_api_key); // mendapatkan id video
-		        
-		    	$data = $this->LinkPreviewerModel->url_get_contents( "https://www.googleapis.com/youtube/v3/videos?id=". $vid ."&key=AIzaSyCwsoXvuNvZ-nQv2X0MvWAd8ks1gWJM_Y0&part=snippet" );
-
-		    	$data = json_decode( $data );
-
-		    	$data = json_decode(json_encode($data),true); // <-- object nya diubah menjadi array dulu biar enak, seragam gitu
-
-				$data = $data['items'][0];
-
-				$data_website['og_image'] = "http://i2.ytimg.com/vi/{$vid}/hqdefault.jpg";
-				$data_website['og_title'] = $data['snippet']['title'];
-				$data_website['og_description'] = $data['snippet']['description'];
-				// var_dump($media);
-				// die();
-			}else{
-				# get media thumbnail. og:image diganti dengan output Method getMedia. Ini berlaku untuk dailymotion dan lain2, fungsinya agar gambar thumbnail yang diambil gak terlalu besar
-				$data_website['og_image'] = $this->LinkPreviewerModel->getMedia( $url );
-			}
-
 			if ($this->LinkPreviewerModel->isImage($url)) {
 			    $images = [$url];
 			    $data_website['media_thumbnail'] = $images;
@@ -112,7 +90,66 @@ class Services extends CI_Controller
 			}else{
 				$data_website = ''; // inisialisasi biar ga error di JS nanti
 			}
+
+			$vid = $this->LinkPreviewerModel->mediaYoutube($url); // mendapatkan id video, sekaligus mendeteksi apakah ini link youtube atau bukan
 			
+			if ( $vid != false ) {
+				# Untuk youtube, harus memakai API khusus dan tidak bisa mengambil dari situsnya langsung karena diproteksi
+		        
+		    	$data = $this->LinkPreviewerModel->url_get_contents( "https://www.googleapis.com/youtube/v3/videos?id=". $vid ."&key=AIzaSyCwsoXvuNvZ-nQv2X0MvWAd8ks1gWJM_Y0&part=snippet" );
+
+		    	$data = json_decode( $data );
+
+		    	$data = json_decode(json_encode($data),true); // <-- object nya diubah menjadi array dulu biar enak, seragam gitu
+
+				$data = $data['items'][0]['snippet'];
+
+				$data_website['og_image'] = "http://i2.ytimg.com/vi/{$vid}/hqdefault.jpg";
+				$data_website['og_title'] = $data['title'];
+				$data_website['og_description'] = $data['description'];
+				$data_website['full_youtube_data'] = $data;
+				$data_website['og_site_name'] = "YouTube";
+				$data_website['description'] = null;
+				$data_website['keywords'] = null;
+				
+			}else{
+				// Google drive tidak bisa diakses sembarangan, jadi dikasih meta data seragam aja lah
+				if ( strpos( $url , "drive.google.com" ) !== false ) {
+					$data_website['og_image'] = "https://sites.google.com/a/kn.ac.th/krupuii/_/rsrc/1525442492460/home/Drive1.jpg";
+					$data_website['og_title'] = "Google Drive";
+					$data_website['og_site_name'] = "Google Drive";
+					$data_website['og_description'] = "Layanan penyimpanan berkas.";
+
+					// ini entah kenapa situsku jadi bahasa filipina, pengen dihapus aja
+					$data_website['page_title'] = "Google Drive";
+					$data_website['description'] = null;
+					$data_website['keywords'] = null;
+
+					// ini entah kenapa situsku jadi bahasa filipina
+					
+					
+				}
+				// kadang ada youtube search juga kan... nah, masuknya ke sini
+				else if ( strpos( $url , "youtube.com" ) !== false ) {
+					$data_website['og_image'] = "https://www.youtube.com/img/desktop/yt_1200.png";
+					$data_website['og_title'] = "YouTube";
+					$data_website['og_site_name'] = "YouTube";
+					$data_website['og_description'] = "Nikmati video dan musik yang Anda suka, upload konten asli, dan bagikan dengan teman, keluarga, serta dunia di YouTube.";
+
+					// ini entah kenapa situsku jadi bahasa filipina, pengen dihapus aja
+					$data_website['page_title'] = "YouTube";
+					$data_website['description'] = null;
+					$data_website['keywords'] = null;
+
+					// ini entah kenapa situsku jadi bahasa filipina
+					
+					
+				}
+				# get media thumbnail. og:image diganti dengan output Method getMedia. Ini berlaku untuk dailymotion dan lain2, fungsinya agar gambar thumbnail yang diambil gak terlalu besar
+				else{
+					$data_website['og_image'] = $this->LinkPreviewerModel->getMedia( $url );
+				}
+			}
 		}
 
 		// final output

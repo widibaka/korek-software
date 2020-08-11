@@ -77,8 +77,8 @@ class Services extends CI_Controller
 			$data_website = $this->LinkPreviewerModel->menyaring_keys_index( $data_website );
 
 			if ($this->LinkPreviewerModel->isImage($url)) {
-			    $images = [$url];
-			    $data_website['media_thumbnail'] = $images;
+			    $images = $url;
+			    $data_website['og_image'] = $images;
 			}
 
 			$data_website['status'] = "success";
@@ -87,7 +87,7 @@ class Services extends CI_Controller
 				// mengganti index yang mengandung : dengan _ agar bisa diakses memakai JavaScript
 				$meta_tags = $this->LinkPreviewerModel->menyaring_keys_index( $meta_tags_mentah );
 				$data_website = array_merge( $data_website, $meta_tags );
-			}else{
+			}else if( !$this->LinkPreviewerModel->isImage($url) ){ // kalau gak ada isinya, dan bukan link gambar, maka data website dikosongin aja
 				$data_website = ''; // inisialisasi biar ga error di JS nanti
 			}
 
@@ -145,16 +145,17 @@ class Services extends CI_Controller
 					
 					
 				}
-				# get media thumbnail. og:image diganti dengan output Method getMedia. Ini berlaku untuk dailymotion dan lain2, fungsinya agar gambar thumbnail yang diambil gak terlalu besar
-				else{
-					$data_website['og_image'] = $this->LinkPreviewerModel->getMedia( $url );
-				}
+				// else{
+				// 	if ( empty( $data_website['og_image'] ) ) {
+				// 		$data_website['media'] = $this->LinkPreviewerModel->getMedia( $url );
+				// 	}
+				// }
 			}
 		}
 
 		// final output
 		$json = json_encode($data_website);
-		echo $json;
+		echo base64_encode($json);
 	}
 /**
 * LINK PREVIEWER end

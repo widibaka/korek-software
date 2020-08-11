@@ -364,14 +364,13 @@ class LinkPreviewerModel extends CI_Model
 	/** Return iframe code for Dailymotion videos */
 	static function mediaDailymotion($url)
 	{
-	    $media = array();
 	    $id = strtok(basename($url), '_');
 	    if ($id != "") {
 	        //$hash = file_get_contents("http://www.dailymotion.com/services/oembed?format=json&url=http://www.dailymotion.com/embed/video/$id");
 	        //$hash=json_decode($hash,true);
 	        //array_push($media, $hash['thumbnail_url']);
 
-	        array_push($media, "http://www.dailymotion.com/thumbnail/160x120/video/$id");
+	        $media = "http://www.dailymotion.com/thumbnail/160x120/video/{{$id}}";
 	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $id . '" class="embed-responsive-item" width="499" height="368" src="http://www.dailymotion.com/embed/video/' . $id . '" allowFullScreen frameborder=0></iframe></div>');
 	    } else {
 	        array_push($media, "", "");
@@ -386,7 +385,7 @@ class LinkPreviewerModel extends CI_Model
 	    preg_match('#(?<=video/).*?(?=/)#', $url, $matching);
 	    $id = $matching[0];
 	    if ($id != "") {
-	        $hash = file_get_contents("http://www.collegehumor.com/oembed.json?url=http://www.dailymotion.com/embed/video/$id");
+	        $hash = file_get_contents("http://www.collegehumor.com/oembed.json?url=http://www.dailymotion.com/embed/video/{{$id}}");
 	        $hash = json_decode($hash, true);
 	        array_push($media, $hash['thumbnail_url']);
 	        // array_push($media, '<div class="embed-responsive embed-responsive-16by9"><iframe id="' . date("YmdHis") . $id . '" class="embed-responsive-item" width="499" height="368" src="http://www.collegehumor.com/e/' . $id . '" allowFullScreen frameborder=0></iframe></div>');
@@ -435,7 +434,6 @@ class LinkPreviewerModel extends CI_Model
 	// MAIN FUNCTION
 	function getMedia($pageUrl)
 	{
-	    $media = array();
 	    if (strpos($pageUrl, "ted.com") !== false) {
 	        $media = $this->mediaTED($pageUrl);
 	    } else if (strpos($pageUrl, "vimeo.com") !== false) {

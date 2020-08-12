@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Product extends CI_Controller {
+class Chat extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -25,28 +25,13 @@ class Product extends CI_Controller {
 
 	public function index()
 	{
-		$data['title'] = "Product";
+		$data['title'] = "Chat";
 		$data['user'] = $this->KoreksoftModel->getUser('widibaka55@gmail.com');
-		$data['product'] = $this->KoreksoftModel->getAllProduct();
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/sidebar', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('client/product', $data);
+		$this->load->view('client/chat', $data);
 		$this->load->view('templates/footer', $data);
 	}
 
-	public function detail($id)
-	{
-		$data = array();
-		
-		$data['title'] = "Product";
-		$data['user'] = $this->KoreksoftModel->getUser('widibaka55@gmail.com');
-		$data['product'] = $this->KoreksoftModel->getProductById($id);
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/sidebar', $data);
-		$this->load->view('templates/navbar', $data);
-		$this->load->view('client/product_detail', $data);
-		$this->load->view('templates/footer', $data);
-		$this->load->view('client/product_detail_js', $data);
-	}
 }

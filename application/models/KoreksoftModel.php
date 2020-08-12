@@ -23,4 +23,30 @@ class KoreksoftModel extends CI_Model
 			return false;
 		}
 	}
+	public function getSidebarItems()
+	{
+		$result = $this->db->get('sidebar');
+		$data = $result->result_array();
+		return $data;
+	}
+	public function getWebsiteDetail()
+	{
+		$this->db->limit(1);
+		$result = $this->db->get('website');
+		$data = $result->row_array();
+		return $data;
+	}
+	public function getAllProduct()
+	{
+		$result = $this->db->get('product');
+		$data = $result->result_array();
+		return $data;
+	}
+	public function getProductById($id)
+	{
+		$this->db->where('id', $id);
+		$result = $this->db->get('product');
+		$data = $result->row_array();
+		return $data;
+	}
 }

@@ -1,12 +1,20 @@
+<?php 
+$website = $this->KoreksoftModel->getWebsiteDetail();
+if ( empty($product['title']) ) {
+  $product['title'] = '';
+}else{
+  $product['title'] = " - " . $product['title'];
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 3 | Blank Page</title>
+  <title><?= $website['website_name'] ?><?= $product['title'] ?></title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Menyediakan Snippet, Plugin, Source-code">
+  <meta name="description" content="<?= $website['website_description'] ?>">
   <meta name="keywords" content="Snippet, Plugin, Source-code">
   <meta name="author" content="Widi Baka">
   <meta name="robots" content="index, follow" />
@@ -15,21 +23,22 @@
   <meta http-equiv="content-language" content="In-Id" />
   <meta name="geo.placename" content="Indonesia" />
 
+
   <!-- S:fb meta -->
   <meta property="og:type" content="software" />
   <meta property="og:image" content="<?= base_url("assets/koreksoft/img/logo.jpg?ver1") ?>" />
-  <meta property="og:title" content="Korek Software - Menyediakan Snippet, Plugin, Source-code" />
-  <meta property="og:description" content="Menyediakan Snippet, Plugin, Source-code">
+  <meta property="og:title" content="<?= $website['website_title'] ?>" />
+  <meta property="og:description" content="<?= $website['website_description'] ?>">
   <meta property="og:url" content="<?= base_url() ?>" />
-  <meta property="og:site_name" content="Korek Software" />
+  <meta property="og:site_name" content="<?= $website['website_name'] ?>" />
   <!-- e:fb meta -->
 
   <!-- S:tweeter card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@korek_software" />
   <meta name="twitter:creator" content="@korek_software">
-  <meta name="twitter:title" content="Korek Software - Menyediakan Snippet, Plugin, Source-code" />
-  <meta name="twitter:description" content="Snippet, Plugin, Source-code" />
+  <meta name="twitter:title" content="<?= $website['website_title'] ?>" />
+  <meta name="twitter:description" content="<?= $website['website_description'] ?>" />
   <meta name="twitter:image" content="<?= base_url("assets/koreksoft/img/logo.jpg?ver1") ?>" />
   <!-- E:tweeter card -->
 

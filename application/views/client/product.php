@@ -35,7 +35,7 @@
   }
   .product_nav_link{
     text-decoration: none;
-    color: #666;
+    color: #333;
   }
   .product_nav_link:hover{
     text-decoration: none;
@@ -56,7 +56,11 @@
 <div class="row">
   <?php foreach ($product as $key => $value): ?>
   <a class="product_nav_link" href="<?= base_url('product/detail/') . $value['id'] ?>">
-    <div class="product" style="background-image: url('<?= base_url() ?>assets/dist/img/photo2.png');">
+    <?php 
+      $ex = explode("; ", $value['image']);
+      $image = $ex[0];
+    ?>
+    <div class="product" style="background-image: url('<?= base_url() ?>assets/koreksoft/product/<?= $image ?>');">
       <div class="position-relative">
         <div class="ribbon-wrapper ribbon-lg">
           <?php if ( !empty( $value['ribbon_caption'] ) ): ?>

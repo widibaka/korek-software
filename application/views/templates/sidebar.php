@@ -50,7 +50,20 @@
 
                 <li class="nav-item has-treeview">
                   <a href="<?= base_url() . $value['url'] ?>" class="nav-link <?= $active ?>">
-                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                    <i class="nav-icon fas <?php 
+                        if( $value['item'] == "Chat" ){
+                          echo "fa-comments";
+                        }
+                        else if( $value['item'] == "Orders" ){
+                          echo "fa-shopping-cart";
+                        }
+                        else if( $value['item'] == "Home" ){
+                          echo "fa-home";
+                        }
+                        else if( $value['item'] == "Product" ){
+                          echo "fa-book";
+                        }
+                    ?>"></i>
                     <p>
                       <?= $value['item'] ?>
                     </p>

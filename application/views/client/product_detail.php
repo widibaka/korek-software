@@ -16,15 +16,14 @@
       <div class="row">
         <div class="col-12 col-sm-6">
           <h3 class="d-inline-block d-sm-none"><?php echo $product['title'] ?></h3>
+          <?php  $images = explode("; ", $product['image']);  ?>
           <div class="col-12 product-image-thumbs">
-            <div class="product-image-thumb"><img src="<?= base_url() . "assets/" ?>dist/img/prod-1.jpg" alt="Product Image"></div>
-            <div class="product-image-thumb active"><img src="<?= base_url() . "assets/" ?>dist/img/prod-2.jpg" alt="Product Image"></div>
-            <div class="product-image-thumb"><img src="<?= base_url() . "assets/" ?>dist/img/prod-3.jpg" alt="Product Image"></div>
-            <div class="product-image-thumb"><img src="<?= base_url() . "assets/" ?>dist/img/prod-4.jpg" alt="Product Image"></div>
-            <div class="product-image-thumb"><img src="<?= base_url() . "assets/" ?>dist/img/prod-5.jpg" alt="Product Image"></div>
+            <?php foreach ($images as $key0 => $value0): ?>
+            <div class="product-image-thumb"><img src="<?= base_url() . "assets/" ?>koreksoft/product/<?= $value0 ?>" alt="Product Image"></div>
+            <?php endforeach ?>
           </div>
           <div class="col-12">
-            <img src="<?= base_url() . "assets/" ?>dist/img/prod-2.jpg" class="product-image" alt="Product Image">
+            <img src="<?= base_url() . "assets/" ?>koreksoft/product/<?= $images[0] ?>" class="product-image" alt="Product Image">
           </div>
         </div>
         <div class="col-12 col-sm-6">
@@ -33,98 +32,21 @@
 
           <hr>
 
-          <h4 class="mt-3">Size <small>Please select one</small></h4>
-          <div class="btn-group btn-group-toggle" data-toggle="buttons">
-
-
-
-            <div class="card card-widget widget-user-2">
-              <!-- Add the bg color to the header using any of the bg-* classes -->
-              <div class="widget-user-header bg-warning">
-                <div class="widget-user-image">
-                  <img class="img-circle elevation-2" src="../dist/img/user7-128x128.jpg" alt="User Avatar">
-                </div>
-                <!-- /.widget-user-image -->
-                <h3 class="widget-user-username">Nadia Carmichael</h3>
-                <h5 class="widget-user-desc">Lead Developer</h5>
-              </div>
-              <div class="card-footer p-0">
-                <ul class="nav flex-column">
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      Projects <span class="float-right badge bg-primary">31</span>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      Tasks <span class="float-right badge bg-info">5</span>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      Completed Projects <span class="float-right badge bg-success">12</span>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      Followers <span class="float-right badge bg-danger">842</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
+          <a href="<?= $product['link_download'] ?>" target="_blank">
+            <div class="btn btn-primary btn-lg btn-flat" style="width: 100%">
+              <i class="fas fa-download fa-lg mr-2"></i>
+              Download
             </div>
+          </a>
 
-
-
-
-            <label class="btn btn-default text-center">
-              <input type="radio" name="color_option" id="color_option1" autocomplete="off">
-              <span class="text-xl">S</span>
-              <br>
-              Small
-            </label>
-            <label class="btn btn-default text-center active">
-              <input type="radio" name="color_option" id="color_option1" autocomplete="off">
-              <span class="text-xl">M</span>
-              <br>
-              Medium
-            </label>
-            <label class="btn btn-default text-center">
-              <input type="radio" name="color_option" id="color_option1" autocomplete="off">
-              <span class="text-xl">L</span>
-              <br>
-              Large
-            </label>
-            <label class="btn btn-default text-center">
-              <input type="radio" name="color_option" id="color_option1" autocomplete="off">
-              <span class="text-xl">XL</span>
-              <br>
-              Xtra-Large
-            </label>
-          </div>
-
-          <div class="bg-gray py-2 px-3 mt-4">
-            <h2 class="mb-0">
-              $80.00
-            </h2>
-            <h4 class="mt-0">
-              <small>Ex Tax: $80.00 </small>
-            </h4>
-          </div>
-
-          <div class="mt-4">
-            <div class="btn btn-primary btn-lg btn-flat">
-              <i class="fas fa-cart-plus fa-lg mr-2"></i> 
-              Add to Cart
+          <a href="<?= $product['user_docs'] ?>" target="_blank">
+            <div class="mt-3 btn btn-primary btn-lg btn-flat" style="width: 100%">
+              <i class="fas fa-book fa-lg mr-2"></i> 
+              User Documentation
             </div>
-
-            <div class="btn btn-default btn-lg btn-flat">
-              <i class="fas fa-heart fa-lg mr-2"></i> 
-              Add to Wishlist
-            </div>
-          </div>
-
-          <div class="mt-4 product-share">
+          </a>
+          <p class="mt-4 mb-0">Share:</p>
+          <div class="mt-1 product-share">
             <a href="#" class="text-gray">
               <i class="fab fa-facebook-square fa-2x"></i>
             </a>
@@ -140,6 +62,47 @@
           </div>
 
         </div>
+      </div>
+      <hr>
+      <div class="row mt-4" style="margin: auto;">
+      <?php foreach ($product_plan as $key => $value): ?>
+        <div class="col-md-4">
+          <div class="card card-widget widget-user-2 ml-2">
+            <!-- Add the bg color to the header using any of the bg-* classes -->
+            <div class="widget-user-header bg-<?= $value['color'] ?>">
+              <h5><strong><?php echo $value['plan_title'] ?></strong></h5>
+            </div>
+            <div class="card-footer p-0">
+              <ul class="nav flex-column">
+                <?php 
+                  $feature = explode("; ", $value['feature']);
+                ?>
+                <?php foreach ($feature as $key1 => $value1): ?>
+                  <li class="nav-item">
+                    <span class="nav-link">
+                      <?php echo $value1 ?>
+                    </span>
+                  </li>
+                  
+                <?php endforeach ?>
+                <?php if ( $value['price'] != "0" ): ?>
+                  <li class="nav-item">
+                    <span class="nav-link">
+                      <?php echo $value['price'] ?>
+                    </span>
+                  </li>
+                  <li class="nav-item">
+                    <a href="<?php echo base_url("product/make_order/") . $value['id'] ?>" class="nav-link btn btn-success">
+                      <i class="fas fa-cart-plus mr-2"></i> Beli (Purchase)
+                    </a>
+                  </li>
+                <?php endif ?>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+      <?php endforeach ?>
       </div>
     </div>
     <!-- /.card-body -->

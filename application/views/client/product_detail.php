@@ -92,7 +92,7 @@
                     </span>
                   </li>
                   <li class="nav-item">
-                    <a href="<?php echo base_url("product/make_order/") . $value['id'] ?>" class="nav-link btn btn-success">
+                    <a href="<?php echo base_url("product/make_order/") . $value['id'] . "/order/" ?>" class="nav-link btn btn-success">
                       <i class="fas fa-cart-plus mr-2"></i> Beli (Purchase)
                     </a>
                   </li>

@@ -52,15 +52,65 @@ class Product extends CI_Controller {
 		$this->load->view('client/product_detail_js', $data);
 	}
 
-	public function make_order($product_plan_id, $amount = 1)
+	public function make_order($product_plan_id, $redirect, $amount = 1)
 	{
 		$amount = 1; // sementara
 		$user_id = $this->KoreksoftModel->getUser('widibaka55@gmail.com')['user_id'];
-		$this->KoreksoftModel->make_order($product_plan_id, $amount, $user_id);
+		$make_order =  $this->KoreksoftModel->make_order($product_plan_id, $amount, $user_id);
+		if ( $make_order == false ) {
+			$this->KoreksoftModel->set_alert("danger", "Order gagal dibuat! Mohon coba lagi.");
+		}else{
+			$this->KoreksoftModel->set_alert("success", "Order berhasil dibuat. Silakan upload bukti pembayaran dan tunggu konfirmasi dari admin.");
+		}
+		$redirect = str_replace("-", "/", $redirect);
+		redirect( base_url( $redirect ) );
 	}
 
-	public function delete_order($order_id)
+	public function delete_order($order_id, $redirect, $product_id)
 	{
-		$this->KoreksoftModel->delete_order($order_id);
+		$del_order = $this->KoreksoftModel->delete_order($order_id);
+		if ( $del_order == false ) {
+			$this->KoreksoftModel->set_alert("danger", "Order gagal dihapus karena masih aktif!");
+		}else{
+			$this->KoreksoftModel->set_alert("success", "Order berhasil dihapus.");
+		}
+		$redirect = str_replace("-", "/", $redirect);
+		redirect( base_url( $redirect ) );
+	}
+
+	public function delete_order_admin($order_id, $redirect, $product_id)
+	{
+		$del_order = $this->KoreksoftModel->delete_order_admin($order_id);
+		if ( $del_order == false ) {
+			$this->KoreksoftModel->set_alert("danger", "Order gagal dihapus karena masih aktif!");
+		}else{
+			$this->KoreksoftModel->set_alert("success", "Order berhasil dihapus.");
+		}
+		$redirect = str_replace("-", "/", $redirect);
+		redirect( base_url( $redirect ) );
+	}
+
+	public function confirm_order($order_id, $redirect, $product_id)
+	{
+		$confirm_order = $this->KoreksoftModel->confirm_order($order_id);
+		if ( $confirm_order == false ) {
+			$this->KoreksoftModel->set_alert("danger", "Order gagal dikonfirmasi!");
+		}else{
+			$this->KoreksoftModel->set_alert("success", "Order berhasil dikonfirmasi.");
+		}
+		$redirect = str_replace("-", "/", $redirect);
+		redirect( base_url( $redirect ) );
+	}
+
+	public function unconfirm_order($order_id, $redirect, $product_id)
+	{
+		$confirm_order = $this->KoreksoftModel->unconfirm_order($order_id);
+		if ( $confirm_order == false ) {
+			$this->KoreksoftModel->set_alert("danger", "Konfirmasi gagal dihapus!");
+		}else{
+			$this->KoreksoftModel->set_alert("success", "Konfirmasi berhasil dihapus.");
+		}
+		$redirect = str_replace("-", "/", $redirect);
+		redirect( base_url( $redirect ) );
 	}
 }

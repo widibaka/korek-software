@@ -1,6 +1,11 @@
 <?php 
  $website = $this->KoreksoftModel->getWebsiteDetail();
- $sidebar = $this->KoreksoftModel->getSidebarItems(); 
+ if ( $user['role_id'] == 2 ) {
+    $sidebar = $this->KoreksoftModel->getSidebarItems();
+ }else if ( $user['role_id'] == 1 ){
+    $sidebar = $this->KoreksoftModel->getSidebarItems_admin();
+ }
+
 ?>
   <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -54,14 +59,17 @@
                         if( $value['item'] == "Chat" ){
                           echo "fa-comments";
                         }
-                        else if( $value['item'] == "Orders" ){
+                        else if( $value['url'] == "order" ){
                           echo "fa-shopping-cart";
                         }
-                        else if( $value['item'] == "Home" ){
+                        else if( $value['url'] == "home" ){
                           echo "fa-home";
                         }
-                        else if( $value['item'] == "Product" ){
+                        else if( $value['url'] == "product" ){
                           echo "fa-book";
+                        }
+                        else {
+                          echo "fa-minus";
                         }
                     ?>"></i>
                     <p>

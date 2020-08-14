@@ -7,6 +7,7 @@
 <script>
   $(function () {
     $("#order_table").DataTable();
+    $("#canceled_order_table").DataTable();
   });
 
   function show_modal(plan_id, order_id) {
@@ -31,5 +32,23 @@
       URL.revokeObjectURL(preview.src) // free memory
     }
   };
+
+  function fn_tampilkan_gambar() {
+    var checkBox = document.getElementById("customSwitch3");
+    if ( checkBox.checked == true ) {
+      $("tr").each(function() { // looping setiap baris tabel
+          var URL_GAMBAR = $(this).find("td .gambar").attr('href'); // mendapatkan value href yaitu URL gambar
+          $(this).find("td .gambar").addClass('hide'); // elemen anchor dihilangi
+          $(this).find("td img").attr('src', URL_GAMBAR); // URL tadi ditemplokne ning element img
+          $(this).find("td img").show();
+      });
+    }else{
+      $("tr").each(function() { // looping setiap baris tabel
+          $(this).find("td .gambar").removeClass('hide'); // elemen anchor dimunculin lagi
+          $(this).find("td img").attr('src', ''); // URL dihilangin
+          $(this).find("td img").hide();
+      });
+    }
+  }
 
 </script>

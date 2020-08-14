@@ -11,6 +11,12 @@ class KoreksoftModel extends CI_Model
 		# code...
 	}
 
+		public function getDayLeft($date)
+		{
+			$d1=strtotime( $date );
+			$d2=ceil(($d1-time())/60/60/24);
+			return $d2;
+		}
 
 		//Fungsi utk bikin waktu format database jadi lokal indo
 	    public function convertTimeFormat($tgl_sumber)
@@ -148,7 +154,17 @@ class KoreksoftModel extends CI_Model
 	    public function set_alert($jenis, $pesan)
 		{
 			// jenis alert ada danger, warning, success
-			$this->session->set_flashdata('message', '<div class="alert alert-' . $jenis . '" role="alert">' . $pesan . '</div>');
+			$this->session->set_flashdata('message', '<div class="alert alert-' . $jenis . ' d-none" role="alert">' . $pesan . '</div>');
+		}
+
+		public function set_image_name_in_db($order_id, $filename)
+		{
+			$time = time();
+			$data = [
+				"image" => $filename . "?" . $time,
+			];
+			$this->db->where("id", $order_id);
+			$execute = $this->db->update('order', $data);
 		}
 
 
@@ -178,19 +194,87 @@ class KoreksoftModel extends CI_Model
 			"image" => '',
 			"is_active" => 0,
 			"expire" => $expire,
+			"cancel" => 0,
 		];
-		$this->db->insert('order', $data);
-		echo "string";
+		$execute = $this->db->insert('order', $data);
+
+		if ( $execute ) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+	public function delete_order_admin($order_id)
+	{	
+		// check if exists
+		$this->db->where('id', $order_id);
+		$this->db->limit(1);
+		$result = $this->db->get('order');
+		$is_active = $result->row_array()['is_active'];
+		$image = $result->row_array()['image'];
+
+		// delete if it is not active order
+		if ( $is_active != 1 ) {
+			// delete image first
+			unlink( 'assets/koreksoft/bukti_pembayaran/' . $image );
+			//then delete the row
+			$this->db->where("id", $order_id);
+			$this->db->delete('order');
+			return true;
+		}else{
+			return false;
+		}
+	}
+	public function confirm_order($order_id)
+	{	
+		// delete if it is not active order
+		$data = ['is_active' => "1"];
+		$this->db->where("id", $order_id);
+		$execute = $this->db->update('order', $data);
+		if ( $execute ) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+	public function unconfirm_order($order_id)
+	{	
+		// delete if it is not active order
+		$data = ['is_active' => "0"];
+		$this->db->where("id", $order_id);
+		$execute = $this->db->update('order', $data);
+		if ( $execute ) {
+			return true;
+		}else{
+			return false;
+		}
 	}
 	public function delete_order($order_id)
-	{
-		$this->db->where("id", $order_id);
-		$this->db->delete('order');
-		echo "a";
+	{	
+		// check if exists
+		$this->db->where('id', $order_id);
+		$this->db->limit(1);
+		$result = $this->db->get('order');
+		$is_active = $result->row_array()['is_active'];
+		// delete if it is not active order
+		$data = ['cancel' => "1"];
+		if ( $is_active != 1 ) {
+			$this->db->where("id", $order_id);
+			$this->db->update('order', $data);
+			return true;
+		}else{
+			return false;
+		}
 	}
 	public function getSidebarItems()
 	{
 		$result = $this->db->get('sidebar');
+		$data = $result->result_array();
+		return $data;
+	}
+	public function getSidebarItems_admin()
+	{
+		$result = $this->db->get('sidebar_admin');
 		$data = $result->result_array();
 		return $data;
 	}
@@ -232,8 +316,34 @@ class KoreksoftModel extends CI_Model
 	public function getOrderByUserId($user_id)
 	{
 		$this->db->where('user_id', $user_id);
+		$this->db->where('cancel !=', "1");
 		$result = $this->db->get('order');
 		$data = $result->result_array();
 		return $data;
+	}
+	public function getOrder_admin()
+	{
+		$result = $this->db->get('order');
+		$data = $result->result_array();
+		return $data;
+	}
+	public function getOrderByUserId_admin($user_id)
+	{
+		$this->db->where('user_id', $user_id);
+		$result = $this->db->get('order');
+		$data = $result->result_array();
+		return $data;
+	}
+	public function getUserById($user_id)
+	{
+		$this->db->where('user_id', $user_id);
+		$this->db->limit(1);
+		$result = $this->db->get('user');
+		if ( $result->num_rows() > 0 ) {
+			$data = $result->row_array();
+			return $data;
+		}else{
+			return false;
+		}
 	}
 }

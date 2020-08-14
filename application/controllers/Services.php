@@ -87,14 +87,7 @@ class Services extends CI_Controller
 				$meta_tags = $this->LinkPreviewerModel->menyaring_keys_index( $meta_tags_mentah );
 				$data_website = array_merge( $data_website, $meta_tags );
 
-				// Pasang iklan
-				if ( !empty($data_website['description']) ) {
-					$data_website['description'] = '<span style="color: #999999; width:100%;">Unregistered <a target="_blank" href="'.base_url("product/detail/3").'">Buy now</a></span> ' . $data_website['description'];
-				}
-				if ( !empty($data_website['og_description']) ) {
-					$data_website['og_description'] = '<span style="color: #999999; width:100%;">Unregistered <a target="_blank" href="'.base_url("product/detail/3").'">Buy now</a></span> ' . $data_website['og_description'];
-				}
-				// Pasang iklan
+
 
 			}else if( !$this->LinkPreviewerModel->isImage($url) ){ // kalau gak ada isinya, dan bukan link gambar, maka data website dikosongin aja
 				$data_website = ''; // ubah jadi string kosong, biar ga error di JS nanti
@@ -154,6 +147,17 @@ class Services extends CI_Controller
 					
 				}
 			}
+
+			// Pasang iklan
+			if ( !empty($data_website['description']) ) {
+				$data_website['description'] = '<span style="color: #999999; width:100%;">(Unregistered <a target="_blank" href="'.base_url("product/detail/3").'">Buy now</a>)</span> ' . $data_website['description'];
+			}
+			if ( !empty($data_website['og_description']) ) {
+				$data_website['og_description'] = '<span style="color: #999999; width:100%;">(Unregistered <a target="_blank" href="'.base_url("product/detail/3").'">Buy now</a>)</span> ' . $data_website['og_description'];
+			}
+			// var_dump($reg_profile);
+			// die();
+			// Pasang iklan
 		}
 
 		// final output

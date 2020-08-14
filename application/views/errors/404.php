@@ -7,12 +7,6 @@
           <div class="col-sm-6">
             <h1>404 Error Page</h1>
           </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">404 Error Page</li>
-            </ol>
-          </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -26,11 +20,11 @@
           <h3><i class="fas fa-exclamation-triangle text-warning"></i> Oops! Page not found.</h3>
 
           <p>
-            We could not find the page you were looking for.
-            Meanwhile, you may <a href="../../index.html">return to dashboard</a> or try using the search form.
+            No such page you were looking for.
+            Maybe you would like to <a href="<?php echo base_url("product") ?>">return to dashboard</a>.
           </p>
 
-          <form class="search-form">
+      <!--     <form class="search-form">
             <div class="input-group">
               <input type="text" name="search" class="form-control" placeholder="Search">
 
@@ -39,8 +33,7 @@
                 </button>
               </div>
             </div>
-            <!-- /.input-group -->
-          </form>
+          </form> -->
         </div>
         <!-- /.error-content -->
       </div>

@@ -32,6 +32,7 @@
     <meta name="twitter:image" content="<?= base_url("assets/koreksoft/img/logo.jpg?ver1") ?>" />
     <!-- E:tweeter card -->
 
+    <link rel="icon" type="image/png" href="<?= base_url('assets/koreksoft/') ?>img/logo.jpg" />
     <!-- animate css -->
     <link rel="stylesheet" href="<?= base_url("assets/landing/"); ?>css/animate.min.css">
     <!-- bootstrap css -->

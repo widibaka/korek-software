@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Order extends CI_Controller {
+class Admin extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -23,38 +23,37 @@ class Order extends CI_Controller {
 		parent::__construct();
 	}
 
-	public function index()
+	public function order()
 	{
 		$data['title'] = "Orders";
 		$data['user'] = $this->KoreksoftModel->getUser('widibaka55@gmail.com');
 
 		$user_id = $data['user']['user_id'];
 
-
-		if ( !empty( $this->input->post() ) ) {
-			// komponen
-			$user_id = $this->input->post('user_id');
-			$plan_id = $this->input->post('plan_id');
-			$order_id = $this->input->post('order_id');
-			// siap siap untuk upload
-			$name = "image";
-			$path = "assets/koreksoft/bukti_pembayaran/";
-			$rename_to = $user_id . "-" . $plan_id . "-" . $order_id;
-			// upload now
-			$upload_gambar = $this->KoreksoftModel->upload_gambar( $name, $path, $rename_to );
-			// ubah nama image di database
-			$image_name = $upload_gambar['data']['new_name'];
-			$this->KoreksoftModel->set_image_name_in_db( $order_id, $image_name );
-			
-		}
-
-		$data['orders'] = $this->KoreksoftModel->getOrderByUserId($user_id);
+		$data['orders'] = $this->KoreksoftModel->getOrder_admin();
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/sidebar', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('client/order', $data);
+		$this->load->view('admin/order', $data);
 		$this->load->view('templates/footer', $data);
-		$this->load->view('client/order_js', $data);
+		$this->load->view('admin/order_js', $data);
+	}
+
+	public function client($client_id)
+	{
+		$data['title'] = "Orders";
+		$data['user'] = $this->KoreksoftModel->getUser('widibaka55@gmail.com');
+
+		$user_id = $data['user']['user_id'];
+
+		$data['orders'] = $this->KoreksoftModel->getOrderByUserId_admin($client_id);
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/sidebar', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('admin/order', $data);
+		$this->load->view('templates/footer', $data);
+		$this->load->view('admin/order_js', $data);
 	}
 }

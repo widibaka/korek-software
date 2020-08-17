@@ -21,6 +21,7 @@ class Admin extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->KoreksoftModel->checkSession(); // dilempar ke login page kalau session habis
 	}
 
 	public function order()

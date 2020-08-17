@@ -21,12 +21,14 @@ class Order extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->KoreksoftModel->checkSession(); // dilempar ke login page kalau session habis
 	}
 
 	public function index()
 	{
 		$data['title'] = "Orders";
-		$data['user'] = $this->KoreksoftModel->getUser('widibaka55@gmail.com');
+		$email = $this->session->userdata("email");
+		$data['user'] = $this->KoreksoftModel->getUser($email);
 
 		$user_id = $data['user']['user_id'];
 

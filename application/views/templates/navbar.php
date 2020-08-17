@@ -120,5 +120,5 @@
     </ul>
   </nav>
   <!-- /.navbar -->
-<?php echo $this->session->flashdata('message');  ?>
+<?php echo $this->session->flashdata('alert');  ?>
 <!-- Alert -->

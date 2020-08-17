@@ -12,7 +12,7 @@ if ( empty($product['title']) ) {
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title><?= $website['website_name'] ?><?= $product['title'] ?></title>
-  <link rel="icon" type="image/png" href="<?= base_url('assets/koreksoft/') ?>img/logo.jpg" />
+  <link rel="icon" type="image/png" href="<?= base_url('assets/koreksoft/') ?>img/logo.png" />
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="<?= $website['website_description'] ?>">
@@ -27,7 +27,7 @@ if ( empty($product['title']) ) {
 
   <!-- S:fb meta -->
   <meta property="og:type" content="software" />
-  <meta property="og:image" content="<?= base_url("assets/koreksoft/img/logo.jpg?ver1") ?>" />
+  <meta property="og:image" content="<?= base_url("assets/koreksoft/img/logo.png?ver1") ?>" />
   <meta property="og:title" content="<?= $website['website_title'] ?>" />
   <meta property="og:description" content="<?= $website['website_description'] ?>">
   <meta property="og:url" content="<?= base_url() ?>" />
@@ -40,7 +40,7 @@ if ( empty($product['title']) ) {
   <meta name="twitter:creator" content="@korek_software">
   <meta name="twitter:title" content="<?= $website['website_title'] ?>" />
   <meta name="twitter:description" content="<?= $website['website_description'] ?>" />
-  <meta name="twitter:image" content="<?= base_url("assets/koreksoft/img/logo.jpg?ver1") ?>" />
+  <meta name="twitter:image" content="<?= base_url("assets/koreksoft/img/logo.png?ver1") ?>" />
   <!-- E:tweeter card -->
 
   <!-- Font Awesome -->

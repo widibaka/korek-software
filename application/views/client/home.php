@@ -16,7 +16,7 @@
 
     <!-- S:fb meta -->
     <meta property="og:type" content="software" />
-    <meta property="og:image" content="<?= base_url("assets/koreksoft/img/logo.jpg?ver1") ?>" />
+    <meta property="og:image" content="<?= base_url("assets/koreksoft/img/logo.jpg?ver1.1") ?>" />
     <meta property="og:title" content="<?= $website['website_title'] ?>" />
     <meta property="og:description" content="<?= $website['website_description'] ?>">
     <meta property="og:url" content="<?= base_url() ?>" />
@@ -29,10 +29,10 @@
     <meta name="twitter:creator" content="@korek_software">
     <meta name="twitter:title" content="<?= $website['website_title'] ?>" />
     <meta name="twitter:description" content="<?= $website['website_description'] ?>" />
-    <meta name="twitter:image" content="<?= base_url("assets/koreksoft/img/logo.jpg?ver1") ?>" />
+    <meta name="twitter:image" content="<?= base_url("assets/koreksoft/img/logo.png?ver1") ?>" />
     <!-- E:tweeter card -->
 
-    <link rel="icon" type="image/png" href="<?= base_url('assets/koreksoft/') ?>img/logo.jpg" />
+    <link rel="icon" type="image/png" href="<?= base_url('assets/koreksoft/') ?>img/logo.png" />
     <!-- animate css -->
     <link rel="stylesheet" href="<?= base_url("assets/landing/"); ?>css/animate.min.css">
     <!-- bootstrap css -->
@@ -70,13 +70,14 @@
             <li><a href="<?= base_url("assets/landing/"); ?>#pricing">Pricing</a></li>
             <li><a href="<?= base_url("assets/landing/"); ?>#download">Download</a></li>
             <li><a href="<?= base_url("assets/landing/"); ?>#contact">Contact</a></li>
+            <li><a href="<?= base_url("auth/login"); ?>" onclick="link()">Login</a></li>
           </ul>
         </div>
       </div>
     </nav>
     <!-- end navigation -->
     <!-- start home -->
-    <section id="home">
+    <section id="home" style="background: url('<?php echo base_url() . "assets/landing/" ?>images/new-bg.jpg') no-repeat; background-size: cover;">
       <div class="overlay">
         <div class="container">
           <div class="row">
@@ -274,7 +275,7 @@
     <footer>
       <div class="container">
         <div class="row">
-          <p>Copyright © 2084 Your Company Name</p>
+          <p>© 2020 - <?php echo date("Y") . " " . $website['website_name']; ?></p>
         </div>
       </div>
     </footer>
@@ -285,5 +286,11 @@
     <script src="<?= base_url("assets/landing/"); ?>js/wow.min.js"></script>
     <script src="<?= base_url("assets/landing/"); ?>js/jquery.singlePageNav.min.js"></script>
     <script src="<?= base_url("assets/landing/"); ?>js/custom.js"></script>
+
+    <script type="text/javascript">
+      function link() {
+        window.location.href = '<?php echo base_url("auth/login") ?>';
+      }
+    </script>
   </body>
 </html>

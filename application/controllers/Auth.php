@@ -29,11 +29,42 @@ class Auth extends CI_Controller {
 	}
 
 	public function login()
+	{	
+		if ( $this->session->userdata("email") ) { // kalau session email ada, maka redirect ke dashboard
+			redirect( base_url("product") );
+		}
+		// kalau sudah submit, masuk ke if yang atas. kalau belum, masuk ke else
+		if ( !empty($this->input->post()) ) {
+			$email = $this->input->post("email", true);
+			$password = $this->input->post("password", true);
+			$login = $this->KoreksoftModel->loginUser($email, $password);
+			// kalau validasinya berhasil, maka masuk ke product jika client, dan masuk ke admin/order kalau admin
+			if ( $login != false ) {
+				if ( $login['role_id'] == 2 ) {
+					$this->session->set_userdata("email", $email); // simpan di session
+					redirect( base_url("product") );
+				}
+				else if( $login['role_id'] == 1 ) {
+					$this->session->set_userdata("email", $email); // simpan di session
+					redirect( base_url("admin/order") );
+				}
+			}
+			else{
+				//  kalau validasi salah, pasang alert lalu refresh
+				$this->KoreksoftModel->set_alert("danger", "Password atau email Anda salah!");
+				$this->KoreksoftModel->refresh();
+				die();
+			}
+		}
+		else{
+			$this->load->view('login');
+		}
+	}
+	public function logout()
 	{
-		$data['title'] = "Product";
-		$data['user'] = $this->KoreksoftModel->getUser('widibaka55@gmail.com');
-		$data['product'] = $this->KoreksoftModel->getAllProduct();
-		$this->load->view('login', $data);
+	  $this->session->unset_userdata('email');
+
+	  redirect( base_url("home") );
 	}
 
 }

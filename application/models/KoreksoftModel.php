@@ -154,7 +154,7 @@ class KoreksoftModel extends CI_Model
 	    public function set_alert($jenis, $pesan)
 		{
 			// jenis alert ada danger, warning, success
-			$this->session->set_flashdata('message', '<div class="alert alert-' . $jenis . ' d-none" role="alert">' . $pesan . '</div>');
+			$this->session->set_flashdata('alert', '<div class="alert alert-' . $jenis . ' d-none" role="alert">' . $pesan . '</div>');
 		}
 
 		public function set_image_name_in_db($order_id, $filename)
@@ -181,10 +181,18 @@ class KoreksoftModel extends CI_Model
 			return false;
 		}
 	}
+
+	public function checkSession()
+	{
+		if ( empty( $this->session->userdata("email") ) ) {
+			redirect( base_url("auth/login") );
+			die();
+		}
+	}
 	public function make_order($product_plan_id, $amount, $user_id)
 	{
 		$timestamp = date("Y-m-d H:i:s");
-		$d=strtotime("+6 Months");
+		$d=strtotime("+3 Months");
 		$expire = date("Y-m-d H:i:s", $d);
 		$data = [
 			"product_plan_id" => $product_plan_id,
@@ -248,6 +256,23 @@ class KoreksoftModel extends CI_Model
 		}else{
 			return false;
 		}
+	}
+	public function loginUser($email, $password)
+	{	
+		$this->db->where('email', $email);
+		$this->db->where('password', $password);
+		$this->db->limit(1);
+		$result = $this->db->get('user');
+		if ( $result->num_rows() > 0 ) {
+			$data = $result->row_array();
+			return $data;
+		}else{
+			return false;
+		}
+	}
+	public function refresh()
+	{
+		redirect( $this->uri->uri_string() );
 	}
 	public function delete_order($order_id)
 	{	

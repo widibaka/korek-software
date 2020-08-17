@@ -9,7 +9,7 @@
   <title><?php echo $website['website_title'] ?></title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/png" href="<?= base_url('assets/koreksoft/') ?>img/logo.jpg" />
+  <link rel="icon" type="image/png" href="<?= base_url('assets/koreksoft/') ?>img/logo.png" />
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="<?php echo base_url() . 'assets/' ?>plugins/fontawesome-free/css/all.min.css">
@@ -19,6 +19,8 @@
   <link rel="stylesheet" href="<?php echo base_url() . 'assets/' ?>plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="<?php echo base_url() . 'assets/' ?>dist/css/adminlte.min.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="<?= base_url() ?>assets/plugins/sweetalert2/sweetalert2.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <style type="text/css">
@@ -42,6 +44,7 @@
   </style>
 </head>
 <body class="hold-transition login-page">
+<?php echo $this->session->flashdata("alert"); ?>
 <div class="login-box" style="background-color: rgb(255, 255, 255, 0.2);">
   <div class="login-logo kotak">
     <a href="#"><b><?php echo $website['website_name'] ?></b></a>
@@ -105,6 +108,80 @@
 <script src="<?php echo base_url() . 'assets/' ?>plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="<?php echo base_url() . 'assets/' ?>dist/js/adminlte.min.js"></script>
+<!-- Sweet Alert 2 plugin -->
+<script src="<?= base_url() ?>assets/plugins/sweetalert2/sweetalert2.js"></script>
+
+<script type="text/javascript">
+    
+    // membuat alert yang ada danger,warning,dan success
+    
+    var isi_alert = $('.alert').html()
+
+    function alert_danger(){
+        swal.fire({
+            // title: "Peringatan!",
+            text: isi_alert,
+            buttonsStyling: false,
+            confirmButtonClass: "btn btn-primary",
+            icon: "error"
+        });
+    }
+
+    function alert_success(){
+        swal.fire({
+            // title: "Bagus!",
+            text: isi_alert,
+            buttonsStyling: false,
+            confirmButtonClass: "btn btn-primary",
+            icon: "success"
+        });
+    }
+    
+    function alert_warning(){
+        swal.fire({
+            text: isi_alert,
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonClass: "btn btn-primary",
+        })
+    }
+    
+    function alert_info(){
+        swal.fire({
+            text: isi_alert,
+            icon: 'info',
+            showCancelButton: false,
+            confirmButtonClass: "btn btn-primary",
+        })
+    }
+
+    function alert_basic(){
+        swal.fire({
+            text: isi_alert,
+            buttonsStyling: false,
+            confirmButtonClass: "btn btn-primary"
+        })
+    }
+    if ( $('.alert').length > 0 ) {
+        // menentukan jenis alert lewat deteksi class yang ada
+        if ($('.alert').hasClass('alert-danger')) {
+            alert_danger();
+        }
+        else if ($('.alert').hasClass('alert-success')) {
+            alert_success();            
+        }
+        else if ($('.alert').hasClass('alert-warning')) {
+            alert_warning();            
+        }
+        else if ($('.alert').hasClass('alert-info')) {
+            alert_info();            
+        }
+        else {
+            alert_basic();
+        }
+    }
+
+</script>
 
 </body>
 </html>

@@ -26,9 +26,13 @@ class Home extends CI_Controller {
 
 	public function index()
 	{
-		$data = array();
-		$data['title'] = "Home";
-		$data['user'] = $this->KoreksoftModel->getUser('widibaka55@gmail.com');
+		$data['product'] = $this->KoreksoftModel->getAllProduct();
+
+		$email = $this->session->userdata("email");
+		if ( $email ) {
+			$data['user'] = $this->KoreksoftModel->getUser($email);
+		}
+
 		$this->load->view('client/home', $data);
 		$this->load->view('client/home_js', $data);
 	}

@@ -28,7 +28,7 @@ class Product extends CI_Controller {
 	{
 		$email = $this->session->userdata("email");
 		$data['user'] = $this->KoreksoftModel->getUser($email);
-		$data['title'] = "Product";
+		$data['title'] = "Products";
 		$data['product'] = $this->KoreksoftModel->getAllProduct();
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/sidebar', $data);
@@ -42,7 +42,7 @@ class Product extends CI_Controller {
 		$data = array();
 		$email = $this->session->userdata("email");
 		
-		$data['title'] = "Product";
+		$data['title'] = "Products";
 		$data['user'] = $this->KoreksoftModel->getUser( $email  );
 		$data['product'] = $this->KoreksoftModel->getProductById($id);
 		$data['product_plan'] = $this->KoreksoftModel->getProductPlan($id);
@@ -54,28 +54,31 @@ class Product extends CI_Controller {
 		$this->load->view('client/product_detail_js', $data);
 	}
 
-	public function make_order($product_plan_id, $redirect, $amount = 1)
+	public function make_order($product_plan_id, $redirect, $amount = 1, $in_period)
 	{
 		$this->KoreksoftModel->checkSession(); // dilempar ke login page kalau session habis
 		$email = $this->session->userdata("email");
-		$amount = 1; // sementara
 		$user_id = $this->KoreksoftModel->getUser( $email  )['user_id'];
-		$make_order =  $this->KoreksoftModel->make_order($product_plan_id, $amount, $user_id);
+		$make_order =  $this->KoreksoftModel->make_order($product_plan_id, $amount, $in_period, $user_id);
 		if ( $make_order == false ) {
 			$this->KoreksoftModel->set_alert("danger", "Order gagal dibuat! Mohon coba lagi.");
 		}else{
-			$this->KoreksoftModel->set_alert("success", "Order berhasil dibuat. Silakan upload bukti pembayaran dan tunggu konfirmasi dari admin.");
+			if ( $amount == 0 ) {
+				$this->KoreksoftModel->set_alert("success", "Free Code berhasil diaktifkan.");
+			}else{
+				$this->KoreksoftModel->set_alert("success", "Order berhasil dibuat. Silakan upload bukti pembayaran dan tunggu konfirmasi dari admin 1 x 24 jam.");
+			}
 		}
 		$redirect = str_replace("-", "/", $redirect);
 		redirect( base_url( $redirect ) );
 	}
 
-	public function delete_order($order_id, $redirect, $product_id)
+	public function delete_order($order_id, $redirect)
 	{
 		$this->KoreksoftModel->checkSession(); // dilempar ke login page kalau session habis
 		$del_order = $this->KoreksoftModel->delete_order($order_id);
 		if ( $del_order == false ) {
-			$this->KoreksoftModel->set_alert("danger", "Order gagal dihapus karena masih aktif!");
+			$this->KoreksoftModel->set_alert("danger", "Order gagal dibatalkan karena masih aktif!");
 		}else{
 			$this->KoreksoftModel->set_alert("success", "Order berhasil dihapus.");
 		}
@@ -83,7 +86,7 @@ class Product extends CI_Controller {
 		redirect( base_url( $redirect ) );
 	}
 
-	public function delete_order_admin($order_id, $redirect, $product_id)
+	public function delete_order_admin($order_id, $redirect)
 	{
 		$this->KoreksoftModel->checkSession(); // dilempar ke login page kalau session habis
 		$del_order = $this->KoreksoftModel->delete_order_admin($order_id);
@@ -96,10 +99,16 @@ class Product extends CI_Controller {
 		redirect( base_url( $redirect ) );
 	}
 
-	public function confirm_order($order_id, $redirect, $product_id)
+	public function confirm_order($order_id, $user_id, $redirect)
 	{
 		$this->KoreksoftModel->checkSession(); // dilempar ke login page kalau session habis
-		$confirm_order = $this->KoreksoftModel->confirm_order($order_id);
+
+		$email = $this->KoreksoftModel->getUserById($user_id)["email"];
+
+		$message = "Selamat Kode Premium Anda kini telah aktif! <br>Congratulation, your premium code is now active! <br>Order ID: <strong><br><a href='http://koreksoft.online/order'>Check di sini</a>".$order_id."</strong><br><br><br><br><br><br> - Widi Baka, Koreksoft";
+		$send_email = $this->KoreksoftModel->kirim_email("no_reply@koreksoft.online", "Koreksoft", $email, "Premium Code", $message);
+
+		$confirm_order = $this->KoreksoftModel->confirm_order($order_id, $user_id);
 		if ( $confirm_order == false ) {
 			$this->KoreksoftModel->set_alert("danger", "Order gagal dikonfirmasi!");
 		}else{
@@ -109,7 +118,7 @@ class Product extends CI_Controller {
 		redirect( base_url( $redirect ) );
 	}
 
-	public function unconfirm_order($order_id, $redirect, $product_id)
+	public function unconfirm_order($order_id, $redirect)
 	{
 		$this->KoreksoftModel->checkSession(); // dilempar ke login page kalau session habis
 		$confirm_order = $this->KoreksoftModel->unconfirm_order($order_id);

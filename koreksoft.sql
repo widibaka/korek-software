@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 14 Agu 2020 pada 02.26
--- Versi server: 10.3.16-MariaDB
--- Versi PHP: 7.3.6
+-- Generation Time: Aug 21, 2020 at 08:03 PM
+-- Server version: 10.3.16-MariaDB
+-- PHP Version: 7.3.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -25,26 +25,60 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `link_previewer`
+-- Table structure for table `link_previewer`
 --
 
 CREATE TABLE `link_previewer` (
   `id` int(11) NOT NULL,
+  `order_id` int(11) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
+  `jenis` varchar(60) NOT NULL,
   `request_remains` int(5) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `link_previewer`
+-- Dumping data for table `link_previewer`
 --
 
-INSERT INTO `link_previewer` (`id`, `email`, `request_remains`) VALUES
-(1, 'widibaka55@gmail.com', 1000);
+INSERT INTO `link_previewer` (`id`, `order_id`, `email`, `jenis`, `request_remains`) VALUES
+(2, 1, 'free@free', 'public', 990),
+(6, 238493, 'widi.udb@gmail.com', 'free', 99),
+(8, 238800, 'widi.udb@gmail.com', 'premium', 4990),
+(9, 261984, 'widi.udb@gmail.com', 'premium', 5000),
+(10, 261984, 'widi.udb@gmail.com', 'premium', 5000),
+(11, 365834, 'widicahyo@yahoo.com', 'free', 100),
+(12, 474349, 'widi_dwi@fikom.udb.ac.id', 'free', 100);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `order`
+-- Table structure for table `notification`
+--
+
+CREATE TABLE `notification` (
+  `id` int(11) NOT NULL,
+  `user_id` int(21) NOT NULL,
+  `subject` varchar(55) NOT NULL DEFAULT '''''',
+  `content` varchar(255) NOT NULL DEFAULT '''''',
+  `timestamp` datetime DEFAULT NULL,
+  `read` int(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `notification`
+--
+
+INSERT INTO `notification` (`id`, `user_id`, `subject`, `content`, `timestamp`, `read`) VALUES
+(1, 2, 'Order telah dikonfirmasi', 'Premium Code kini telah aktif.', '2020-08-13 00:00:00', 1),
+(2, 2, 'Order telah dikonfirmasi2', 'Premium Code kini telah aktif.2', '2020-08-13 00:00:00', 1),
+(3, 2, 'Konfirmasi Diterima', 'Selamat! Kode premium Anda sudah aktif.', '2020-08-20 01:33:39', 1),
+(4, 3, 'Free Code telah aktif', 'Anda telah mengaktifkan free code', '2020-08-20 02:37:14', 1),
+(5, 4, 'Free Code telah aktif', 'Anda telah mengaktifkan free code', '2020-08-20 04:59:09', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `order`
 --
 
 CREATE TABLE `order` (
@@ -55,20 +89,28 @@ CREATE TABLE `order` (
   `timestamp` datetime NOT NULL,
   `image` varchar(20) NOT NULL,
   `is_active` int(1) NOT NULL,
-  `expire` datetime NOT NULL
+  `expire` datetime NOT NULL,
+  `cancel` int(11) NOT NULL,
+  `premium_code` varchar(255) DEFAULT NULL,
+  `free_code` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `order`
+-- Dumping data for table `order`
 --
 
-INSERT INTO `order` (`id`, `product_plan_id`, `user_id`, `amount`, `timestamp`, `image`, `is_active`, `expire`) VALUES
-(5, 3, 1, 1, '2020-08-14 01:05:07', '', 0, '2021-02-14 01:05:07');
+INSERT INTO `order` (`id`, `product_plan_id`, `user_id`, `amount`, `timestamp`, `image`, `is_active`, `expire`, `cancel`, `premium_code`, `free_code`) VALUES
+(238493, 2, 2, 0, '2020-08-19 19:01:33', '', 1, '2030-08-19 19:01:33', 0, NULL, 'd2lkaS51ZGJAZ21haWwuY29tQHNhcGFyYXRlQDIzODQ5Mw=='),
+(238800, 5, 2, 1, '2020-08-19 19:06:40', '2-5-238800.JPG?15978', 1, '2020-11-19 19:08:52', 0, 'd2lkaS51ZGJAZ21haWwuY29tQHNhcGFyYXRlQDIzODgwMA==', NULL),
+(261984, 5, 2, 1, '2020-08-20 01:33:04', '', 1, '2020-11-20 01:33:39', 0, 'd2lkaS51ZGJAZ21haWwuY29tQHNhcGFyYXRlQDI2MTk4NA==', NULL),
+(365834, 2, 3, 0, '2020-08-20 02:37:14', '', 1, '2030-08-20 02:37:14', 0, NULL, 'd2lkaWNhaHlvQHlhaG9vLmNvbUBzYXBhcmF0ZUAzNjU4MzQ='),
+(474349, 2, 4, 0, '2020-08-20 04:59:09', '', 1, '2030-08-20 04:59:09', 0, NULL, 'd2lkaV9kd2lAZmlrb20udWRiLmFjLmlkQHNhcGFyYXRlQDQ3NDM0OQ=='),
+(475185, 5, 4, 3, '2020-08-20 05:13:05', '', 0, '0000-00-00 00:00:00', 0, '3@3@4', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `product`
+-- Table structure for table `product`
 --
 
 CREATE TABLE `product` (
@@ -82,7 +124,7 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `product`
+-- Dumping data for table `product`
 --
 
 INSERT INTO `product` (`id`, `title`, `description`, `image`, `ribbon_caption`, `link_download`, `user_docs`) VALUES
@@ -92,7 +134,7 @@ INSERT INTO `product` (`id`, `title`, `description`, `image`, `ribbon_caption`, 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `product_plan`
+-- Table structure for table `product_plan`
 --
 
 CREATE TABLE `product_plan` (
@@ -100,45 +142,69 @@ CREATE TABLE `product_plan` (
   `product_id` int(11) NOT NULL,
   `plan_title` varchar(50) NOT NULL,
   `feature` text NOT NULL,
-  `price` varchar(110) NOT NULL,
+  `rupiah_price` int(110) NOT NULL,
+  `dollar_price` int(11) NOT NULL,
+  `in_period` varchar(60) NOT NULL,
   `color` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `product_plan`
+-- Dumping data for table `product_plan`
 --
 
-INSERT INTO `product_plan` (`id`, `product_id`, `plan_title`, `feature`, `price`, `color`) VALUES
-(1, 3, 'Free', 'No-ads: NO; Request limit: 1000 / day (collective); Could Use The Data: NO', '0', 'danger'),
-(2, 3, 'Registered User', 'No-ads: NO; Request limit: 1000 / day (for each user); Could Use The Data: YES', '0', 'gray'),
-(3, 3, 'Premium', 'No-ads: YES; Request limit: Unlimited; Could Use The Data: YES', 'Rp10.000 / 6 bln ($1 / 6 mo)', 'warning');
+INSERT INTO `product_plan` (`id`, `product_id`, `plan_title`, `feature`, `rupiah_price`, `dollar_price`, `in_period`, `color`) VALUES
+(1, 3, 'Free', 'No-ads: NO; Request limit: 1000 / day (collective); Could Use The Data: NO', 0, 0, '', 'danger'),
+(2, 3, 'Registered User', 'No-ads: YES; Request limit: 100 / day (for each user); Could Use The Data: YES', 155, 0, '', 'gray'),
+(5, 3, 'Premium', 'No-ads: YES; Request limit: 5000/day (each user); Could Use The Data: YES', 10000, 1, '3', 'warning');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `sidebar`
+-- Table structure for table `sidebar`
 --
 
 CREATE TABLE `sidebar` (
   `id` int(11) NOT NULL,
   `item` varchar(100) NOT NULL,
-  `url` varchar(255) NOT NULL
+  `url` varchar(255) NOT NULL,
+  `icon` varchar(60) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `sidebar`
+-- Dumping data for table `sidebar`
 --
 
-INSERT INTO `sidebar` (`id`, `item`, `url`) VALUES
-(1, 'Home', 'home'),
-(2, 'Product', 'product'),
-(3, 'Chat', 'chat'),
-(4, 'Orders', 'order');
+INSERT INTO `sidebar` (`id`, `item`, `url`, `icon`) VALUES
+(1, 'Home', 'home', 'fas fa-home'),
+(2, 'Products', 'product', 'fas fa-book'),
+(4, 'My Orders', 'order', 'fas fa-shopping-cart');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `user`
+-- Table structure for table `sidebar_admin`
+--
+
+CREATE TABLE `sidebar_admin` (
+  `id` int(11) NOT NULL,
+  `item` varchar(100) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `icon` varchar(60) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `sidebar_admin`
+--
+
+INSERT INTO `sidebar_admin` (`id`, `item`, `url`, `icon`) VALUES
+(1, 'Home', 'home', 'fas fa-home'),
+(2, 'Products', 'admin/product', 'fas fa-book'),
+(4, 'Orders', 'admin/order', 'fas fa-shopping-cart');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
 --
 
 CREATE TABLE `user` (
@@ -146,20 +212,24 @@ CREATE TABLE `user` (
   `email` varchar(100) DEFAULT '''''',
   `username` varchar(100) NOT NULL DEFAULT '''''',
   `password` varchar(255) NOT NULL DEFAULT '''''',
-  `register_time` timestamp NULL DEFAULT current_timestamp()
+  `register_time` timestamp NULL DEFAULT current_timestamp(),
+  `role_id` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `user`
+-- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`user_id`, `email`, `username`, `password`, `register_time`) VALUES
-(1, 'widibaka55@gmail.com', 'Widi Baka', '123', '2020-07-31 14:09:05');
+INSERT INTO `user` (`user_id`, `email`, `username`, `password`, `register_time`, `role_id`) VALUES
+(0, 'widibaka55@gmail.com', 'Widi Baka', '123', '2020-07-31 14:09:05', 1),
+(2, 'widi.udb@gmail.com', 'Widi UDB', '123', '2020-07-31 14:09:05', 2),
+(3, 'widicahyo@yahoo.com', 'widi cahyo', 'Passwordku123', '2020-08-19 19:33:48', 2),
+(4, 'widi_dwi@fikom.udb.ac.id', 'WIDI DWI NURCAHYO', '12854', '2020-08-19 21:58:36', 2);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `website`
+-- Table structure for table `website`
 --
 
 CREATE TABLE `website` (
@@ -170,7 +240,7 @@ CREATE TABLE `website` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `website`
+-- Dumping data for table `website`
 --
 
 INSERT INTO `website` (`id`, `website_name`, `website_title`, `website_description`) VALUES
@@ -181,90 +251,114 @@ INSERT INTO `website` (`id`, `website_name`, `website_title`, `website_descripti
 --
 
 --
--- Indeks untuk tabel `link_previewer`
+-- Indexes for table `link_previewer`
 --
 ALTER TABLE `link_previewer`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`email`);
 
 --
--- Indeks untuk tabel `order`
+-- Indexes for table `notification`
+--
+ALTER TABLE `notification`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `order`
 --
 ALTER TABLE `order`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `product`
+-- Indexes for table `product`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `product_plan`
+-- Indexes for table `product_plan`
 --
 ALTER TABLE `product_plan`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `sidebar`
+-- Indexes for table `sidebar`
 --
 ALTER TABLE `sidebar`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `user`
+-- Indexes for table `sidebar_admin`
+--
+ALTER TABLE `sidebar_admin`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`user_id`);
 
 --
--- Indeks untuk tabel `website`
+-- Indexes for table `website`
 --
 ALTER TABLE `website`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `link_previewer`
+-- AUTO_INCREMENT for table `link_previewer`
 --
 ALTER TABLE `link_previewer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT untuk tabel `order`
+-- AUTO_INCREMENT for table `notification`
 --
-ALTER TABLE `order`
+ALTER TABLE `notification`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT untuk tabel `product`
+-- AUTO_INCREMENT for table `order`
+--
+ALTER TABLE `order`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2147483648;
+
+--
+-- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT untuk tabel `product_plan`
+-- AUTO_INCREMENT for table `product_plan`
 --
 ALTER TABLE `product_plan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT untuk tabel `sidebar`
+-- AUTO_INCREMENT for table `sidebar`
 --
 ALTER TABLE `sidebar`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT untuk tabel `user`
+-- AUTO_INCREMENT for table `sidebar_admin`
 --
-ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `sidebar_admin`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT untuk tabel `website`
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `website`
 --
 ALTER TABLE `website`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;

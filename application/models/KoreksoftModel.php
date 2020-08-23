@@ -80,24 +80,36 @@ class KoreksoftModel extends CI_Model
 	    	}
 	    }
 
+	    public function login_success($login)
+	    {
+	    	if ( $login['role_id'] == 2 ) {
+	    		$this->session->set_userdata("email", $login['email']); // simpan di session
+	    		redirect( base_url("product") );
+	    	}
+	    	else if( $login['role_id'] == 1 ) {
+	    		$this->session->set_userdata("email", $login['email']); // simpan di session
+	    		redirect( base_url("admin/order") );
+	    	}
+	    }
+
 	    // kirim email
 	    public function kirim_email($email_address_from, $sender_name, $email_address_to, $subject, $message)
 	    {
 	    	global $SConfig;
 
-	    	// $config = [
+	    	$config = [
 	    	// 	'protocol' => $SConfig->_protocol,
 	    	// 	'smtp_host' => $SConfig->_smtp_host,
 	    	// 	'smtp_user' => $SConfig->_smtp_user,
 	    	// 	'smtp_pass' => $SConfig->_smtp_pass,
 	    	// 	'smtp_port' => $SConfig->_smtp_port,
-	    	// 	'mailtype' => $SConfig->_mailtype,
+	    		'mailtype' => "html",
 	    	// 	'charset' => $SConfig->_charset_email,
 	    	// 	'TLS/SSL' => $SConfig->_TLS_SSL,
 	    	// 	'newline' => $SConfig->_newline
-	    	// ];
+	    	];
 
-	    	$this->load->library('email');
+	    	$this->load->library('email', $config);
 	    	// $this->email->initialize($config);
 
 	    	$this->email->from($email_address_from, $sender_name);
@@ -109,8 +121,10 @@ class KoreksoftModel extends CI_Model
 	    	$send = $this->email->send();
 
 	    	if (!$send) {
-	    		echo $this->email->print_debugger();
-	    		die;
+	    		return $this->email->print_debugger();
+	    	}
+	    	elseif ($send) {
+	    		return true;
 	    	}
 	    }
 
@@ -189,27 +203,374 @@ class KoreksoftModel extends CI_Model
 			die();
 		}
 	}
-	public function make_order($product_plan_id, $amount, $user_id)
+	public function make_order($product_plan_id, $amount, $in_period, $user_id)
 	{
+		
 		$timestamp = date("Y-m-d H:i:s");
-		$d=strtotime("+3 Months");
-		$expire = date("Y-m-d H:i:s", $d);
+		$prepare_id = $user_id . substr(time(), 5);
+
 		$data = [
+			"id" => $prepare_id,
 			"product_plan_id" => $product_plan_id,
 			"user_id" => $user_id,
 			"amount" => $amount,
 			"timestamp" => $timestamp,
 			"image" => '',
 			"is_active" => 0,
-			"expire" => $expire,
+			"expire" => "",
 			"cancel" => 0,
+			"premium_code" => $amount . "@" . $in_period . "@" . $user_id,
 		];
+		if ( $amount == 0 ) {
+			//generate free code
+
+
+			$check = $this->check_if_double_free_code($user_id);
+			if ( $check == false ) { // berarti dia pengen dapet free code dua kali. Itu gak boleh!
+				return false;
+				exit();
+			}
+
+
+
+			$email = $this->getUserById($user_id)["email"];
+			$d = strtotime("+120 Months"); // 10 tahun mas aberlaku
+			$expire = date("Y-m-d H:i:s", $d);
+
+			$data['is_active'] = 1;
+			$data['expire'] = $expire;
+			$data['premium_code'] = null;
+			$data['free_code'] = base64_encode( $email . "@saparate@" . $prepare_id );
+
+			// membuat data di tabel link_previewer
+			$data_lp = [
+				"order_id" => $prepare_id,
+				"email" => $email,
+				"jenis" => "free",
+				"request_remains" => 100,
+			];
+
+			$this->db->insert('link_previewer', $data_lp);
+
+			$this->set_notification("Free Code telah aktif", "Anda telah mengaktifkan free code", $user_id);
+
+
+		}
 		$execute = $this->db->insert('order', $data);
 
 		if ( $execute ) {
 			return true;
 		}else{
 			return false;
+		}
+	}
+	public function check_if_double_free_code($user_id)
+	{	
+		$this->db->where("user_id", $user_id);
+		$this->db->where("free_code !=", null );
+		$num_free_code = $this->db->get("order")->num_rows();
+		
+		if ( $num_free_code > 0 ) {
+			return false;
+		}else{
+			return true;
+		}
+	}
+	public function confirm_order($order_id, $user_id)
+	{	
+
+		// confirm
+		$this->db->where("id", $order_id);
+		$order = $this->db->get("order")->row_array();
+		$premium_code_mentah = explode( "@", $order["premium_code"]);
+		if ( strpos( $order["premium_code"], "@" ) ) {
+			// memecah bahan mentah codepremium
+			$amount = $premium_code_mentah[0];
+			$in_period = $premium_code_mentah[1];
+			$user_id = $premium_code_mentah[2];
+
+			//generating premium code
+			$email = $this->getUserById($user_id)["email"];
+			$premium_code = base64_encode( $email . "@saparate@" . $order_id );
+
+			// menghitung masa berlaku
+			$total_months = $in_period * $amount;
+			$d=strtotime("+" . $total_months . " Months");
+			$expire = date("Y-m-d H:i:s", $d);
+
+
+			$data = [
+				"is_active" => 1,
+				"expire" => $expire,
+				"premium_code" => $premium_code,
+			];
+
+			// membuat data di tabel link_previewer
+			$data_lp = [
+				"order_id" => $order_id,
+				"email" => $email,
+				"jenis" => "premium",
+				"request_remains" => 5000,
+			];
+
+			$this->db->insert('link_previewer', $data_lp);
+
+
+			//set notification
+			$this->set_notification( "Order telah dikonfirmasi", "Selamat! Kode premium Anda sudah aktif.", $user_id );
+
+		}else{
+			$data = [
+				"is_active" => 1,
+			];
+		}
+		$this->db->where("id", $order_id);
+		$execute = $this->db->update('order', $data);
+		if ( $execute ) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+    public function validate_request_lp($reg_profile)
+    {
+    	$final_status = [ // dideklarasi
+    		"email_valid" => true,
+    		"expire_valid" => true,
+    		"is_active_valid" => true,
+    		"request_remains_valid" => true,
+
+    		"ketsuron" => true,
+
+    	];
+
+    	$data = explode( "@saparate@", $reg_profile );
+    	$email = $data[0];
+    	$order_id = $data[1];
+
+    	$order = $this->getOrderByOrderId( $order_id );
+
+    	$expire = $order['expire'];
+
+    	
+    	// validations
+    	// jika salah satudari empat ini false, maka ketsuronnya false 
+    	if ( $this->validate_email_lp( $order_id, $email ) == false ) {
+    		$final_status['email_valid'] = false;
+    		$final_status['ketsuron'] = false;
+    	};
+
+    	if ( $this->getDayLeft( $expire ) < 0 ) { // kalo sisa hari kurang dari 0, berarti udah habis masa berlakunya
+    		$final_status['expire_valid'] = false;
+    		$final_status['ketsuron'] = false;
+    	};
+
+    	if ( $order['is_active'] == 0 ) {
+    		$final_status['is_active_valid'] = false;
+    		$final_status['ketsuron'] = false;
+    	};
+
+    	if ( $this->check_request_remains($order_id) == false ) { // cek kesempatan requestnya habis belum
+
+    		$final_status['request_remains_valid'] = false;
+    		$final_status['ketsuron'] = false;
+
+    	}else{ // kalo belum habis, kurangi
+    		// kurangi 
+    		$this->kurangi_kesempatan_request($order_id);
+    	}
+    	
+
+    	return $final_status;
+    }
+
+	public function getOrderByOrderId($order_id)
+	{
+		$this->db->where('id', $order_id);
+		$result = $this->db->get('order');
+		$data = $result->row_array();
+		return $data;
+	}
+	//Fungsi utk bikin waktu mundur buat chat dan lain-lain
+	public function get_time_ago($tgl)
+	{
+		$tgl = strtotime($tgl);
+		$time_difference = time() - $tgl;
+
+		if ($time_difference < 1) {
+			return '1 detik lalu';
+		}
+
+		$condition = array(
+			12 * 30 * 24 * 60 * 60 	=>  'tahun',
+			30 * 24 * 60 * 60       =>  'bulan',
+			24 * 60 * 60            =>  'hari',
+			60 * 60                 =>  'jam',
+			60                      =>  'menit',
+			1                       =>  'detik'
+		);
+
+		foreach ($condition as $secs => $str) {
+			$d = $time_difference / $secs;
+
+			if ($d >= 1) {
+				$t = round($d);
+				return $t . ' ' . $str . ' yang lalu';
+			}
+		}
+	}
+	public function kurangi_kesempatan_request($order_id)
+	{
+		// ambil data
+		$this->db->where('order_id', $order_id);
+		$result = $this->db->get('link_previewer');
+		$request_remains = $result->row_array()['request_remains'];
+		
+		// kurangi kesempatan request
+		$request_remains_2 = $request_remains - 1;
+
+		// update setelah dikurangi
+		$this->db->where('order_id', $order_id);
+		$this->db->update("link_previewer", [ "request_remains" => $request_remains_2 ]);
+
+	}
+	public function check_request_remains($order_id)
+	{
+		$this->db->where('order_id', $order_id);
+		$result = $this->db->get('link_previewer');
+		$request_remains = $result->row_array()['request_remains'];
+		
+		if ( $request_remains < 1 ) {
+			return false;
+		}else{
+			return true;
+		}
+	}
+	public function get_notification($user_id)
+	{
+		$this->db->where('user_id', $user_id);
+		$this->db->order_by('id', "DESC");
+		$this->db->limit(8);
+		$result = $this->db->get('notification');
+		$notification = $result->result_array();
+		
+		if ( $result ) {
+			return $notification;
+		}else{
+			return false;
+		}
+	}
+	public function get_unread_notification($user_id)
+	{
+		$this->db->where('user_id', $user_id);
+		$this->db->where('read', "0");
+		$result = $this->db->get('notification');
+		$unread = $result->num_rows();
+		return $unread;
+	}
+	public function set_notification( $subject, $content, $user_id )
+	{
+		$timestamp = date("Y-m-d H:i:s");
+		$data = [
+			"user_id" => $user_id,
+			"subject" => $subject,
+			"content" => $content,
+			"timestamp" => $timestamp,
+			"read" => 0,
+		];
+		$result = $this->db->insert('notification', $data);
+	}
+	public function mark_as_read_notif( $user_id )
+	{
+		$timestamp = date("Y-m-d H:i:s");
+		$this->db->where( "user_id", $user_id );
+		$data = [
+			"read" => 1,
+		];
+		$this->db->update('notification', $data);
+	}
+	public function get_request_remains($order_id)
+	{
+		$this->db->where('order_id', $order_id);
+		$result = $this->db->get('link_previewer');
+		$request_remains = $result->row_array()['request_remains'];
+		
+		if ( $request_remains ) {
+			return $request_remains;
+		}else{
+			return false;
+		}
+	}
+	public function validate_email_lp($order_id, $email)
+	{
+		$this->db->where('order_id', $order_id);
+		$result = $this->db->get('link_previewer');
+		$email_2 = $result->row_array()['email'];
+
+		if ( $email_2 == $email ) {
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public function hitung_tagihan($order_id)
+	{	
+		$this->db->where("id", $order_id);
+		$order = $this->db->get("order")->row_array();
+		$premium_code_mentah = explode( "@", $order["premium_code"]);
+		
+
+		// memecah bahan mentah codepremium
+		$amount = $premium_code_mentah[0];
+		// $in_period = $premium_code_mentah[1];
+		// $user_id = $premium_code_mentah[2];
+
+		$plan_id = $order['product_plan_id'];
+
+		$product_plan = $this->getProductPlanById($plan_id);
+		$rupiah_price = $product_plan['rupiah_price'];
+		$dollar_price = $product_plan['dollar_price'];
+
+
+		$total_rp = $rupiah_price * $amount;
+		$total_d = $dollar_price * $amount;
+
+		$data = [
+			"total_rp" => $total_rp,
+			"total_d" => $total_d,
+		];
+		if ( $product_plan ) {
+			return $data;
+		}else{
+			return "";
 		}
 	}
 	public function delete_order_admin($order_id)
@@ -219,27 +580,17 @@ class KoreksoftModel extends CI_Model
 		$this->db->limit(1);
 		$result = $this->db->get('order');
 		$is_active = $result->row_array()['is_active'];
-		$image = $result->row_array()['image'];
+		$image = explode("?", $result->row_array()['image'])[0];
 
 		// delete if it is not active order
 		if ( $is_active != 1 ) {
 			// delete image first
-			unlink( 'assets/koreksoft/bukti_pembayaran/' . $image );
+			if ( $image ) {
+				unlink( 'assets/koreksoft/bukti_pembayaran/' . $image );
+			}
 			//then delete the row
 			$this->db->where("id", $order_id);
 			$this->db->delete('order');
-			return true;
-		}else{
-			return false;
-		}
-	}
-	public function confirm_order($order_id)
-	{	
-		// delete if it is not active order
-		$data = ['is_active' => "1"];
-		$this->db->where("id", $order_id);
-		$execute = $this->db->update('order', $data);
-		if ( $execute ) {
 			return true;
 		}else{
 			return false;
@@ -266,6 +617,47 @@ class KoreksoftModel extends CI_Model
 		if ( $result->num_rows() > 0 ) {
 			$data = $result->row_array();
 			return $data;
+		}else{
+			return false;
+		}
+	}
+	public function registerUser($username, $email, $password)
+	{	
+		$timestamp = date("Y-m-d H:i:s");
+		$data = [
+			"email" => $email,
+			"username" => $username,
+			"password" => $password,
+			"role_id" => 2,
+			"register_time" => $timestamp,
+		];
+		$execute = $this->db->insert('user', $data);
+		if ( $execute ) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+	public function registerUser_google($username, $email)
+	{	
+		$pass_random = mt_rand(10000, 100000);
+		$timestamp = date("Y-m-d H:i:s");
+		$data = [
+			"email" => $email,
+			"username" => $username,
+			"password" => $pass_random,
+			"role_id" => 2,
+			"register_time" => $timestamp,
+		];
+
+		// kirim email
+		$message = "Congrats! You have registered. <br>This is your password below: <br> Selamat! Anda telah terdaftar.<br>Berikut ini adalah password Anda:<br><strong> " . $pass_random . "</strong>";
+		// $send_email = $this->KoreksoftModel->kirim_email("no_reply@koreksoft.online", "Widi", $email, "Password Koreksoft", $message);
+
+		// simpan ke db
+		$execute = $this->db->insert('user', $data);
+		if ( $execute ) {
+			return true;
 		}else{
 			return false;
 		}

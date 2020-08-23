@@ -32,4 +32,22 @@
     }
   };
 
+  function show_code(id) {
+    var code = $("#code-"+id).html();
+    var request_remains = $("#remaining-request-"+id).html();
+    $("#code-modal").val(code);
+    $("#request_remains").html("Request remaining: "+request_remains);
+    
+  }
+
+  var loadFile = function(event) {
+    // show image preview
+    $("#image-prev-in-modal").show();
+    var preview = document.getElementById('image-prev-in-modal');
+    preview.src = URL.createObjectURL(event.target.files[0]);
+    preview.onload = function() {
+      URL.revokeObjectURL(preview.src) // free memory
+    }
+  };
+
 </script>

@@ -14,7 +14,7 @@ if ( empty($product['title']) ) {
   <title><?= $website['website_name'] ?><?= $product['title'] ?></title>
   <link rel="icon" type="image/png" href="<?= base_url('assets/koreksoft/') ?>img/logo.png" />
   <!-- Tell the browser to be responsive to screen width -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=0.8">
   <meta name="description" content="<?= $website['website_description'] ?>">
   <meta name="keywords" content="Snippet, Plugin, Source-code">
   <meta name="author" content="Widi Baka">
@@ -27,8 +27,8 @@ if ( empty($product['title']) ) {
 
   <!-- S:fb meta -->
   <meta property="og:type" content="software" />
-  <meta property="og:image" content="<?= base_url("assets/koreksoft/img/logo.png?ver1") ?>" />
-  <meta property="og:title" content="<?= $website['website_title'] ?>" />
+  <meta property="og:image" content="<?= base_url("assets/koreksoft/img/logo.jpg?ver3") ?>" />
+  <meta property="og:title" content="<?= $website['website_name'] ?><?= $product['title'] ?>" />
   <meta property="og:description" content="<?= $website['website_description'] ?>">
   <meta property="og:url" content="<?= base_url() ?>" />
   <meta property="og:site_name" content="<?= $website['website_name'] ?>" />
@@ -38,9 +38,9 @@ if ( empty($product['title']) ) {
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@korek_software" />
   <meta name="twitter:creator" content="@korek_software">
-  <meta name="twitter:title" content="<?= $website['website_title'] ?>" />
+  <meta name="twitter:title" content="<?= $website['website_name'] ?><?= $product['title'] ?>" />
   <meta name="twitter:description" content="<?= $website['website_description'] ?>" />
-  <meta name="twitter:image" content="<?= base_url("assets/koreksoft/img/logo.png?ver1") ?>" />
+  <meta name="twitter:image" content="<?= base_url("assets/koreksoft/img/logo.jpg?ver3") ?>" />
   <!-- E:tweeter card -->
 
   <!-- Font Awesome -->

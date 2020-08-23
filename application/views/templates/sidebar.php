@@ -56,23 +56,7 @@
 
                 <li class="nav-item has-treeview">
                   <a href="<?= base_url() . $value['url'] ?>" class="nav-link <?= $active ?>">
-                    <i class="nav-icon fas <?php 
-                        if( $value['item'] == "Chat" ){
-                          echo "fa-comments";
-                        }
-                        else if( $value['url'] == "order" ){
-                          echo "fa-shopping-cart";
-                        }
-                        else if( $value['url'] == "home" ){
-                          echo "fa-home";
-                        }
-                        else if( $value['url'] == "product" ){
-                          echo "fa-book";
-                        }
-                        else {
-                          echo "fa-minus";
-                        }
-                    ?>"></i>
+                    <i class="nav-icon <?php echo $value['icon'] ?>"></i>
                     <p>
                       <?= $value['item'] ?>
                     </p>
@@ -80,6 +64,7 @@
                 </li>
               <?php endforeach ?>
               <hr>
+                <?php if ( !empty( $this->session->userdata("email") ) ): ?>
                 <li class="nav-item has-treeview" style="border-top: #666 solid 1px;">
                   <a href="<?= base_url("auth/logout") ?>" class="nav-link">
                     <i class="nav-icon fa fa-sign-out-alt"></i>
@@ -88,6 +73,16 @@
                     </p>
                   </a>
                 </li>
+                <?php else: ?>
+                <li class="nav-item has-treeview" style="border-top: #666 solid 1px;">
+                  <a href="<?= base_url("auth/login") ?>" class="nav-link">
+                    <i class="nav-icon fa fa-sign-in-alt"></i>
+                    <p>
+                      login
+                    </p>
+                  </a>
+                </li>
+                <?php endif ?>
             </ul>
           </nav>
           <!-- /.sidebar-menu -->

@@ -47,7 +47,7 @@
 <?php echo $this->session->flashdata("alert"); ?>
 <div class="login-box" style="background-color: rgb(255, 255, 255, 0.2);">
   <div class="login-logo kotak">
-    <a href="#"><b><?php echo $website['website_name'] ?></b></a>
+    <a href="<?php echo base_url() ?>"><b><?php echo $website['website_name'] ?></b></a>
   </div>
   <!-- /.login-logo -->
   <div class="card">
@@ -56,7 +56,7 @@
 
       <form action="" method="post">
         <div class="input-group mb-3">
-          <input name="email" type="email" class="form-control" placeholder="Email">
+          <input name="email" type="email" class="form-control" placeholder="Email" required="required">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -64,7 +64,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input name="password" type="password" class="form-control" placeholder="Password">
+          <input name="password" type="password" class="form-control" placeholder="Password" required="required">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -84,17 +84,17 @@
 
       <div class="social-auth-links text-center mb-3">
         <p>- OR -</p>
-        <a href="#" class="btn btn-block btn-danger">
+        <a href="<?php echo $auth_url; ?>" class="btn btn-block btn-danger">
           <i class="fab fa-google mr-2"></i> Sign in using Google
         </a>
       </div>
       <!-- /.social-auth-links -->
 
       <p class="mb-1">
-        <a href="forgot-password.html">I forgot my password</a>
+        <a href="forgot_password">I forgot my password</a>
       </p>
       <p class="mb-0">
-        <a href="register.html" class="text-center">Register a new membership</a>
+        <a href="register" class="text-center">Register a new membership</a>
       </p>
     </div>
     <!-- /.login-card-body -->

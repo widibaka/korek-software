@@ -26,7 +26,7 @@ class Order extends CI_Controller {
 
 	public function index()
 	{
-		$data['title'] = "Orders";
+		$data['title'] = "My Orders";
 		$email = $this->session->userdata("email");
 		$data['user'] = $this->KoreksoftModel->getUser($email);
 
@@ -44,9 +44,18 @@ class Order extends CI_Controller {
 			$rename_to = $user_id . "-" . $plan_id . "-" . $order_id;
 			// upload now
 			$upload_gambar = $this->KoreksoftModel->upload_gambar( $name, $path, $rename_to );
-			// ubah nama image di database
-			$image_name = $upload_gambar['data']['new_name'];
-			$this->KoreksoftModel->set_image_name_in_db( $order_id, $image_name );
+			if ( $upload_gambar['status'] == true ) {
+				// ubah nama image di database
+				$image_name = $upload_gambar['data']['new_name'];
+				$this->KoreksoftModel->set_image_name_in_db( $order_id, $image_name );
+				// kirim email ke admin
+				$message = '<p>Ada orderan&nbsp;<span style="font-size: 1rem;">Link Previewer&nbsp;</span><span style="font-size: 1rem;">untuk kamu min:</span></p><p>Klik <a href="http://koreksoft.online/admin/order" target="_blank"><span style="border-radius:5px; padding:3px 8px; background-color: rgb(0, 255, 255);">di sini</span></a></p>';
+				$send_email = $this->KoreksoftModel->kirim_email("no_reply@koreksoft.online", "Koreksoft", "widibaka55@gmail.com", "Ada Pesanan!", $message);
+				$this->KoreksoftModel->set_alert("success", "Upload gambar berhasil.");
+			}elseif ( $upload_gambar['status'] == false ){
+				$this->KoreksoftModel->set_alert("danger", "Gagal upload gambar!");
+			}
+			
 			
 		}
 

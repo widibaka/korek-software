@@ -10,11 +10,10 @@
   </div>
     <!-- /.content -->
   <footer class="main-footer">
-    <div class="float-right d-none d-sm-block">
+   <!--  <div class="float-right d-none d-sm-block">
       <b>Version</b> 3.0.5
-    </div>
-    <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong> All rights
-    reserved.
+    </div> -->
+    <strong>Korek Software 2020 - <?php echo date("Y") ?> 
   </footer>
 
   <!-- Control Sidebar -->
@@ -32,11 +31,19 @@
 <!-- AdminLTE App -->
 <script src="<?= base_url() ?>assets/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="<?= base_url() ?>assets/dist/js/demo.js"></script>
+<!-- <script src="<?= base_url() ?>assets/dist/js/demo.js"></script> -->
 <!-- Sweet Alert 2 plugin -->
 <script src="<?= base_url() ?>assets/plugins/sweetalert2/sweetalert2.js"></script>
 <script type="text/javascript">
     
+    function mark_as_read() {
+        <?php 
+            $host = $_SERVER['HTTP_HOST'];
+            $redirect = str_replace("/", "garing", $host . $_SERVER['PHP_SELF']);
+        ?>
+        window.location.href = "<?= base_url() . "auth/mark_as_read/" . $user['user_id'] . "/" . $redirect ?>"
+    }
+
     // membuat alert yang ada danger,warning,dan success
     
     var isi_alert = $('.alert').html()

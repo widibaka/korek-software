@@ -33,6 +33,15 @@
     }
   };
 
+  function show_code(id) {
+    var code = $("#code-"+id).html();
+    var request_remains = $("#remaining-request-"+id).html();
+    $("#code-modal").val(code);
+    $("#request_remains").html("Request remaining: "+request_remains);
+    
+
+  }
+
   function fn_tampilkan_gambar() {
     var checkBox = document.getElementById("customSwitch3");
     if ( checkBox.checked == true ) {

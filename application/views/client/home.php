@@ -66,11 +66,18 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right text-uppercase">
             <li><a href="<?= base_url("assets/landing/"); ?>#home">Home</a></li>
-            <li><a href="<?= base_url("assets/landing/"); ?>#feature">Features</a></li>
-            <li><a href="<?= base_url("assets/landing/"); ?>#pricing">Pricing</a></li>
-            <li><a href="<?= base_url("assets/landing/"); ?>#download">Download</a></li>
+            <li><a href="<?= base_url("assets/landing/"); ?>#download">Products</a></li>
             <li><a href="<?= base_url("assets/landing/"); ?>#contact">Contact</a></li>
-            <li><a href="<?= base_url("auth/login"); ?>" onclick="link()">Login</a></li>
+            <?php if ( $this->session->userdata("email") ): ?>
+              <li><a class="link" href="<?= base_url("order"); ?>"><?php 
+
+              echo substr($user['username'], 0, 5) ?><?php if ( strlen($user['username']) > 5 ) {
+                echo "...";
+              } ?></a></li>
+            <?php else: ?>
+              <li><a class="link" href="<?= base_url("auth/login"); ?>">Login</a></li>
+              <li><a class="link" href="<?= base_url("auth/register"); ?>">Register</a></li>
+            <?php endif ?>
           </ul>
         </div>
       </div>
@@ -93,142 +100,27 @@
       </div>
     </section>
     <!-- end home -->
-    <!-- start divider -->
-    <section id="divider">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-4 wow fadeInUp templatemo-box" data-wow-delay="0.3s">
-            <i class="fa fa-laptop"></i>
-            <h3 class="text-uppercase">RESPONSIVE LAYOUT</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. </p>
-          </div>
-          <div class="col-md-4 wow fadeInUp templatemo-box" data-wow-delay="0.3s">
-            <i class="fa fa-twitter"></i>
-            <h3 class="text-uppercase">BOOTSTRAP 3.3.4</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. </p>
-          </div>
-          <div class="col-md-4 wow fadeInUp templatemo-box" data-wow-delay="0.3s">
-            <i class="fa fa-font"></i>
-            <h3 class="text-uppercase">GOOGLE FONT</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. </p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- end divider -->
 
-    <!-- start feature -->
-    <section id="feature">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.6s">
-            <h2 class="text-uppercase">Our Software Features</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <p><span><i class="fa fa-mobile"></i></span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <p><i class="fa fa-code"></i>Quis autem velis reprehenderit et quis voluptate velit esse quam.</p>
-          </div>
-          <div class="col-md-6 wow fadeInRight" data-wow-delay="0.6s">
-            <img src="<?= base_url("assets/landing/"); ?>images/software-img.png" class="img-responsive" alt="feature img">
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- end feature -->
-
-    <!-- start feature1 -->
-    <section id="feature1">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-            <img src="<?= base_url("assets/landing/"); ?>images/software-img.png" class="img-responsive" alt="feature img">
-          </div>
-          <div class="col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-            <h2 class="text-uppercase">More of Your Software</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <p><span><i class="fa fa-mobile"></i></span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <p><i class="fa fa-code"></i>Quis autem velis reprehenderit et quis voluptate velit esse quam.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- end feature1 -->
-
-    <!-- start pricing -->
-    <section id="pricing">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 wow bounceIn">
-            <h2 class="text-uppercase">Our Pricing</h2>
-          </div>
-          <div class="col-md-4 wow fadeIn" data-wow-delay="0.6s">
-            <div class="pricing text-uppercase">
-              <div class="pricing-title">
-                <h4>Basic Plan</h4>
-                <p>$11</p>
-                <small class="text-lowercase">monthly</small>
-              </div>
-              <ul>
-                <li>6 GB Space</li>
-                <li>600 GB Bandwidth</li>
-                <li>60 More Themes</li>
-                <li>Lifetime Support</li>
-              </ul>
-              <button class="btn btn-primary text-uppercase">Sign up</button>
-            </div>
-          </div>
-          <div class="col-md-4 wow fadeIn" data-wow-delay="0.6s">
-            <div class="pricing active text-uppercase">
-              <div class="pricing-title">
-                <h4>Business Plan</h4>
-                <p>$22</p>
-                <small class="text-lowercase">monthly</small>
-              </div>
-              <ul>
-                <li>15 GB space</li>
-                <li>1,500 GB Bandwidth</li>
-                <li>150 More Themes</li>
-                <li>Lifetime Support</li>
-              </ul>
-              <button class="btn btn-primary text-uppercase">Sign up</button>
-            </div>
-          </div>
-          <div class="col-md-4 wow fadeIn" data-wow-delay="0.6s">
-            <div class="pricing text-uppercase">
-              <div class="pricing-title">
-                <h4>Pro Plan</h4>
-                <p>$33</p>
-                <small class="text-lowercase">monthly</small>
-              </div>
-              <ul>
-                <li>35 GB space</li>
-                <li>3,500 GB bandwidth</li>
-                <li>350 more themes</li>
-                <li>Lifetime Support</li>
-              </ul>
-              <button class="btn btn-primary text-uppercase">Sign Up</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- end pricing -->
-
+    <?php foreach ($product as $key => $pd): ?>
+      
     <!-- start download -->
     <section id="download">
       <div class="container">
         <div class="row">
           <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.6s">
-            <h2 class="text-uppercase">Download Our Software</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. </p>
-            <button class="btn btn-primary text-uppercase"><i class="fa fa-download"></i> Download</button>
+            <h2 class="text-uppercase"><?php echo $pd['title'] ?></h2>
+            <p><?php echo $pd['description'] ?> </p>
+            <a href="<?php echo base_url("product/detail/" . $pd['id']) ?>" class="btn btn-primary text-uppercase">Selengkapnya</a>
           </div>
           <div class="col-md-6 wow fadeInRight" data-wow-delay="0.6s">
-            <img src="<?= base_url("assets/landing/"); ?>images/software-img.png" class="img-responsive" alt="feature img">
+            <img src="<?= base_url("assets/"); ?>koreksoft/product/<?php echo explode("; ", $pd['image'])[0] ?>" class="img-responsive" alt="feature img">
           </div>
         </div>
       </div>
     </section>
     <!-- end download -->
+
+    <?php endforeach ?>
 
     <!-- start contact -->
     <section id="contact">
@@ -288,9 +180,9 @@
     <script src="<?= base_url("assets/landing/"); ?>js/custom.js"></script>
 
     <script type="text/javascript">
-      function link() {
-        window.location.href = '<?php echo base_url("auth/login") ?>';
-      }
+      $(".link").click(function() {
+        window.location.href = $(this).attr("href");
+      });
     </script>
   </body>
 </html>

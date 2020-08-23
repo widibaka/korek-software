@@ -19,11 +19,11 @@
           <?php  $images = explode("; ", $product['image']);  ?>
           <div class="col-12 product-image-thumbs">
             <?php foreach ($images as $key0 => $value0): ?>
-            <div class="product-image-thumb"><img src="<?= base_url() . "assets/" ?>koreksoft/product/<?= $value0 ?>" alt="Product Image"></div>
+            <div class="product-image-thumb"><img class="small-image" src="<?= base_url() . "assets/" ?>koreksoft/product/<?= $value0 ?>" alt="Product Image"></div>
             <?php endforeach ?>
           </div>
           <div class="col-12">
-            <img src="<?= base_url() . "assets/" ?>koreksoft/product/<?= $images[0] ?>" class="product-image" alt="Product Image">
+            <img src="<?= base_url() . "assets/" ?>koreksoft/product/<?= $images[0] ?>" class="product-image" alt="Product Image" id="big-image">
           </div>
         </div>
         <div class="col-12 col-sm-6">
@@ -85,17 +85,28 @@
                   </li>
                   
                 <?php endforeach ?>
-                <?php if ( $value['price'] != "0" ): ?>
-                  <li class="nav-item">
-                    <span class="nav-link">
-                      <?php echo $value['price'] ?>
-                    </span>
-                  </li>
-                  <li class="nav-item">
-                    <a href="<?php echo base_url("product/make_order/") . $value['id'] . "/order/" ?>" class="nav-link btn btn-success">
-                      <i class="fas fa-cart-plus mr-2"></i> Beli (Purchase)
-                    </a>
-                  </li>
+                <?php if ( $value['rupiah_price'] != "0" ): ?>
+                    <?php if ( $value['rupiah_price'] == 155 & $value['dollar_price'] == 0 ): ?>
+                          <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link btn bg-gray" onclick="purchase_free(<?= $value["id"] ?>)">
+                              <i class="fas fa-cart-plus mr-2"></i> Claim your free code
+                            </a>
+                          </li>
+                    <?php else: ?>
+                          <li class="nav-item">
+                            <span class="nav-link">
+                              Rp <span id="rupiah_price"><?php echo $value['rupiah_price'] ?></span> or $ <span id="dollar_price"><?php echo $value['dollar_price']; ?></span> / <span id="in_period"><?php echo $value['in_period']; ?></span> months
+                          </li>
+                          <li class="nav-item pl-2">
+                            Jumlah: <input class="form-control" type="number" min="1" max="4" value="1" id="amount" onchange="hitung_tagihan()" style="width: 60px">
+                            total: <span id="total"></span>
+                          </li>
+                          <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link btn btn-success" oninput="purchase(<?= $value["id"] ?>)">
+                              <i class="fas fa-cart-plus mr-2"></i> Beli (Purchase)
+                            </a>
+                          </li>
+                    <?php endif ?>
                 <?php endif ?>
               </ul>
             </div>

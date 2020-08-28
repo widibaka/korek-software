@@ -45,21 +45,6 @@
               User Documentation
             </div>
           </a>
-          <p class="mt-4 mb-0">Share:</p>
-          <div class="mt-1 product-share">
-            <a href="#" class="text-gray">
-              <i class="fab fa-facebook-square fa-2x"></i>
-            </a>
-            <a href="#" class="text-gray">
-              <i class="fab fa-twitter-square fa-2x"></i>
-            </a>
-            <a href="#" class="text-gray">
-              <i class="fas fa-envelope-square fa-2x"></i>
-            </a>
-            <a href="#" class="text-gray">
-              <i class="fas fa-rss-square fa-2x"></i>
-            </a>
-          </div>
 
         </div>
       </div>
@@ -85,6 +70,7 @@
                   </li>
                   
                 <?php endforeach ?>
+                <!-- tombol tambahan -->
                 <?php if ( $value['rupiah_price'] != "0" ): ?>
                     <?php if ( $value['rupiah_price'] == 155 & $value['dollar_price'] == 0 ): ?>
                           <li class="nav-item">
@@ -98,11 +84,11 @@
                               Rp <span id="rupiah_price"><?php echo $value['rupiah_price'] ?></span> or $ <span id="dollar_price"><?php echo $value['dollar_price']; ?></span> / <span id="in_period"><?php echo $value['in_period']; ?></span> months
                           </li>
                           <li class="nav-item pl-2">
-                            Jumlah: <input class="form-control" type="number" min="1" max="4" value="1" id="amount" onchange="hitung_tagihan()" style="width: 60px">
+                            Jumlah: <input class="form-control" type="number" min="1" max="4" value="1" id="amount" oninput="hitung_tagihan()" style="width: 60px">
                             total: <span id="total"></span>
                           </li>
                           <li class="nav-item">
-                            <a href="javascript:void(0)" class="nav-link btn btn-success" oninput="purchase(<?= $value["id"] ?>)">
+                            <a href="javascript:void(0)" class="nav-link btn btn-success" onclick="purchase(<?= $value["id"] ?>)">
                               <i class="fas fa-cart-plus mr-2"></i> Beli (Purchase)
                             </a>
                           </li>

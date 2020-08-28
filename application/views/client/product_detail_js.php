@@ -7,7 +7,7 @@
 
 	function hitung_tagihan() {
 		var amount = $("#amount").val();
-		if ( amount > 4 ) { alert("Sorry, 4 at max. Please input number lower than 4.") }
+		if ( amount > 4 ) { alert("Sorry, 4 at max. Please input number lower than 4."); $("#amount").val("1") }
 		var rupiah_price = $("#rupiah_price").html();
 		var dollar_price = $("#dollar_price").html();
 		var in_period = $("#in_period").html();

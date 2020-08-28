@@ -3,12 +3,13 @@
     background: #FFFFFF;
     box-shadow: 0 0 0px #333;
     margin: 5px;
-    width: 345px;
+    width: 290px;
     height: 202px;
     overflow: hidden;
     box-shadow: 0 0 3px #999;
     transition: box-shadow 200ms ease;
-    background-size: cover;
+    background-size: contain;
+    background-repeat: no-repeat;
   }
   .product:hover{
     box-shadow: 0 0 5px #333;

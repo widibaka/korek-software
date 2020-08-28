@@ -92,7 +92,7 @@
                   <div class="icheck-primary">
                     <input type="checkbox" id="agreeTerms" name="terms" value="agree" required="">
                     <label for="agreeTerms">
-                     I agree to the <a href="#">terms</a>
+                     I agree to the <a href="<?php echo base_url('services/syarat_ketentuan') ?>">terms</a>
                     </label>
                   </div>
                 </div>

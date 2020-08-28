@@ -13,6 +13,17 @@ class Services extends CI_Controller
 		$this->load->model("KoreksoftModel");
 		$this->load->model("LinkPreviewerModel");
 	}
+	public function syarat_ketentuan()
+	{
+		$email = $this->session->userdata("email");
+		$data['title'] = "Syarat & Ketentuan";
+		$data['website'] = $this->KoreksoftModel->getWebsiteDetail();
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/sidebar', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('client/syarat_ketentuan', $data);
+		$this->load->view('templates/footer', $data);
+	}
 	
 /**
 * LINK PREVIEWER start
@@ -39,163 +50,157 @@ class Services extends CI_Controller
 		$url = $split_data[0];
 		$reg_profile = $split_data[1]; // ini adalah json isinya profil
 
-
 		$validation = $this->KoreksoftModel->validate_request_lp( $reg_profile );
 
 
 			if ( $validation['ketsuron'] == false &&  $reg_profile != "free@free@saparate@1" ) {
 
 				$data_website['status'] = "success";
-				$data_website['page_title'] = "";
-				$data_website['description'] = "";
 
 				if ( $validation["email_valid"] == false ) {
-					$data_website['page_title'] = "Code invalid<br>";
+					$iklan .= 'Code invalid! ';
 				}
-				else if ( $validation["expire_valid"] == false ) {
-					$data_website['page_title'] = "Code expired!<br>";
-					$data_website['description'] = '<span style="color: #999999; width:100%;">(<a target="_blank" href="'.base_url("product/detail/3").'">Buy now</a>)</span>';
+				if ( $validation["expire_valid"] == false ) {
+					$iklan .= 'Code Expired! ';
 				}
-				else if ( $validation["is_active_valid"] == false ) {
-					$data_website['page_title'] = "Account is inactive or banned!<br>";
+				if ( $validation["is_active_valid"] == false ) {
+					$iklan .= 'Account is banned! ';
 				}
-				else if ( $validation["request_remains_valid"] == false ) {
-					$data_website['page_title'] = "Request breaches the limit of a day.<br>";
-					$data_website['description'] = '<span style="color: #999999; width:100%;">(<a target="_blank" href="'.base_url("product/detail/3").'">Buy now</a>)</span>';
+				if ( $validation["request_remains_valid"] == false ) {
+					$iklan .= 'Request breaches the limit of a day! ';
 				}
+
+				$iklan .= '<span style="color: #999999; width:100%;"><a target="_blank" href="'.base_url("product/detail/3").'">Buy now</a> ';
+			}
+			 
+			// pasang iklan kalo reg code gak ada
+			else if ( $reg_profile == "free@free@saparate@1" ) {
+				$iklan = '<span style="color: #999999; width:100%;">(Unregistered <a target="_blank" href="'.base_url("product/detail/3").'">Register for free</a>)</span> ';
 			}
 			
+			
+			
+			/*
+			*  	 ### MULAI MEMBANGUN PREVIEWER ###
+			*/
+			
+			$data_website['source_url'] = $url;
+
+			// get web page title
+			$data_website['page_title'] = $this->LinkPreviewerModel->getTitle( $url );
+
+			// get target's content
+			$html = $this->LinkPreviewerModel->url_get_contents( $url );
+
+
+			// validation
+			if ( !$url OR !$html OR strpos($html, "<title>404 Not Found</title>") AND strlen($html) < 600 ) { 
+
+				$data_website['status'] = "fail";
+
+			}
 			else{
-				// pasang iklan kalo reg code gak ada
-				if ( $reg_profile == "free@free@saparate@1" ) {
-					$iklan = '<span style="color: #999999; width:100%;">(Unregistered <a target="_blank" href="'.base_url("product/detail/3").'">Buy now</a>)</span> ';
-				}
 
-				### mulai membangun previewer ###
-				$data_website['source_url'] = $url;
+					// libxml_use_internal_errors(true); // Yeah if you are so worried about using @ with warnings
+					// $doc = new DomDocument();
+					// $doc->loadHTML($html);
+					// $xpath = new DOMXPath($doc);
+					// $query = '//*/meta[starts-with(@property, \'og:\')]';
+					// $metas = $xpath->query($query);
+					// foreach ($metas as $meta) {
+					//     $property = $meta->getAttribute('property');
+					//     $content = $meta->getAttribute('content');
+					//     $data_website[$property] = $content;
+					// }
 
-				// get web page title
-				$data_website['page_title'] = $this->LinkPreviewerModel->getTitle( $url );
+					$meta_tags_mentah = $this->LinkPreviewerModel->getMetaTags( $html );
 
-				// get target's content
-				$html = $this->LinkPreviewerModel->url_get_contents( $url );
-				// echo $html;
-				// echo "<br>";
-				// echo strlen($html);
-				// die();
+					// mengganti index yang mengandung : dengan _ agar bisa diakses memakai JavaScript
+					$data_website = $this->LinkPreviewerModel->menyaring_keys_index( $data_website );
 
+					if ($this->LinkPreviewerModel->isImage($url)) {
+					    $images = $url;
+					    $data_website['og_image'] = $images;
+					}
 
-				// validation
-				if ( !$url OR !$html OR strpos($html, "<title>404 Not Found</title>") AND strlen($html) < 600 ) { 
+					$data_website['status'] = "success";
 
-					$data_website['status'] = "fail";
-
-				}
-				else{
-
-						// libxml_use_internal_errors(true); // Yeah if you are so worried about using @ with warnings
-						// $doc = new DomDocument();
-						// $doc->loadHTML($html);
-						// $xpath = new DOMXPath($doc);
-						// $query = '//*/meta[starts-with(@property, \'og:\')]';
-						// $metas = $xpath->query($query);
-						// foreach ($metas as $meta) {
-						//     $property = $meta->getAttribute('property');
-						//     $content = $meta->getAttribute('content');
-						//     $data_website[$property] = $content;
-						// }
-
-						$meta_tags_mentah = $this->LinkPreviewerModel->getMetaTags( $html );
-
+					if ( $meta_tags_mentah ) { // masuk ke sini kalau request berhasil!!
 						// mengganti index yang mengandung : dengan _ agar bisa diakses memakai JavaScript
-						$data_website = $this->LinkPreviewerModel->menyaring_keys_index( $data_website );
-
-						if ($this->LinkPreviewerModel->isImage($url)) {
-						    $images = $url;
-						    $data_website['og_image'] = $images;
-						}
-
-						$data_website['status'] = "success";
-
-						if ( $meta_tags_mentah ) { // masuk ke sini kalau request berhasil!!
-							// mengganti index yang mengandung : dengan _ agar bisa diakses memakai JavaScript
-							$meta_tags = $this->LinkPreviewerModel->menyaring_keys_index( $meta_tags_mentah );
-							$data_website = array_merge( $data_website, $meta_tags );
+						$meta_tags = $this->LinkPreviewerModel->menyaring_keys_index( $meta_tags_mentah );
+						$data_website = array_merge( $data_website, $meta_tags );
 
 
 
-						}else if( !$this->LinkPreviewerModel->isImage($url) ){ // kalau gak ada isinya, dan bukan link gambar, maka data website dikosongin aja
-							$data_website = ''; // ubah jadi string kosong, biar ga error di JS nanti
-						}
+					}else if( !$this->LinkPreviewerModel->isImage($url) ){ // kalau gak ada isinya, dan bukan link gambar, maka data website dikosongin aja
+						$data_website = ''; // ubah jadi string kosong, biar ga error di JS nanti
+					}
 
-						$vid = $this->LinkPreviewerModel->mediaYoutube($url); // mendapatkan id video, sekaligus mendeteksi apakah ini link youtube atau bukan
-					
-						if ( $vid != false ) {
-							# Untuk youtube, harus memakai API khusus dan tidak bisa mengambil dari situsnya langsung karena diproteksi
-					        
-					    	$data = $this->LinkPreviewerModel->url_get_contents( "https://www.googleapis.com/youtube/v3/videos?id=". $vid ."&key=AIzaSyCwsoXvuNvZ-nQv2X0MvWAd8ks1gWJM_Y0&part=snippet" );
+					$vid = $this->LinkPreviewerModel->mediaYoutube($url); // mendapatkan id video, sekaligus mendeteksi apakah ini link youtube atau bukan
+				
+					if ( $vid != false ) {
+						# Untuk youtube, harus memakai API khusus dan tidak bisa mengambil dari situsnya langsung karena diproteksi
+				        
+				    	$data = $this->LinkPreviewerModel->url_get_contents( "https://www.googleapis.com/youtube/v3/videos?id=". $vid ."&key=AIzaSyCwsoXvuNvZ-nQv2X0MvWAd8ks1gWJM_Y0&part=snippet" );
 
-					    	$data = json_decode( $data );
+				    	$data = json_decode( $data );
 
-					    	$data = json_decode(json_encode($data),true); // <-- object nya diubah menjadi array dulu biar enak, seragam gitu
+				    	$data = json_decode(json_encode($data),true); // <-- object nya diubah menjadi array dulu biar enak, seragam gitu
 
-							$data = $data['items'][0]['snippet'];
+						$data = $data['items'][0]['snippet'];
 
-							$data_website['og_image'] = "http://i2.ytimg.com/vi/{$vid}/hqdefault.jpg";
-							$data_website['og_title'] = $data['title'];
-							$data_website['og_description'] = $data['description'];
-							$data_website['full_youtube_data'] = $data;
-							$data_website['og_site_name'] = "YouTube";
+						$data_website['og_image'] = "http://i2.ytimg.com/vi/{$vid}/hqdefault.jpg";
+						$data_website['og_title'] = $data['title'];
+						$data_website['og_description'] = $data['description'];
+						$data_website['full_youtube_data'] = $data;
+						$data_website['og_site_name'] = "YouTube";
+						$data_website['description'] = null;
+						$data_website['keywords'] = null;
+						
+					}else{
+						// Google drive tidak bisa diakses sembarangan, jadi dikasih meta data seragam aja lah
+						if ( strpos( $url , "drive.google.com" ) !== false ) {
+							$data_website['og_image'] = "https://sites.google.com/a/kn.ac.th/krupuii/_/rsrc/1525442492460/home/Drive1.jpg";
+							$data_website['og_title'] = "Google Drive";
+							$data_website['og_site_name'] = "Google Drive";
+							$data_website['og_description'] = "Layanan penyimpanan berkas.";
+
+							// ini entah kenapa situsku jadi bahasa filipina, pengen dihapus aja
+							$data_website['page_title'] = "Google Drive";
 							$data_website['description'] = null;
 							$data_website['keywords'] = null;
+
+							// ini entah kenapa situsku jadi bahasa filipina
 							
-						}else{
-							// Google drive tidak bisa diakses sembarangan, jadi dikasih meta data seragam aja lah
-							if ( strpos( $url , "drive.google.com" ) !== false ) {
-								$data_website['og_image'] = "https://sites.google.com/a/kn.ac.th/krupuii/_/rsrc/1525442492460/home/Drive1.jpg";
-								$data_website['og_title'] = "Google Drive";
-								$data_website['og_site_name'] = "Google Drive";
-								$data_website['og_description'] = "Layanan penyimpanan berkas.";
-
-								// ini entah kenapa situsku jadi bahasa filipina, pengen dihapus aja
-								$data_website['page_title'] = "Google Drive";
-								$data_website['description'] = null;
-								$data_website['keywords'] = null;
-
-								// ini entah kenapa situsku jadi bahasa filipina
-								
-								
-							}
-							// kadang ada youtube search juga kan... nah, masuknya ke sini
-							else if ( strpos( $url , "youtube.com" ) !== false ) {
-								$data_website['og_image'] = "https://www.youtube.com/img/desktop/yt_1200.png";
-								$data_website['og_title'] = "YouTube";
-								$data_website['og_site_name'] = "YouTube";
-								$data_website['og_description'] = "Nikmati video dan musik yang Anda suka, upload konten asli, dan bagikan dengan teman, keluarga, serta dunia di YouTube.";
-
-								// ini entah kenapa situsku jadi bahasa filipina, pengen dihapus aja
-								$data_website['page_title'] = "YouTube";
-								$data_website['description'] = null;
-								$data_website['keywords'] = null;
-
-								// ini entah kenapa situsku jadi bahasa filipina
-								
-							}
+							
 						}
+						// kadang ada youtube search juga kan... nah, masuknya ke sini
+						else if ( strpos( $url , "youtube.com" ) !== false ) {
+							$data_website['og_image'] = "https://www.youtube.com/img/desktop/yt_1200.png";
+							$data_website['og_title'] = "YouTube";
+							$data_website['og_site_name'] = "YouTube";
+							$data_website['og_description'] = "Nikmati video dan musik yang Anda suka, upload konten asli, dan bagikan dengan teman, keluarga, serta dunia di YouTube.";
 
-						// Pasang iklan
-						if ( !empty($data_website['description']) ) {
-							$data_website['description'] = $iklan . $data_website['description'];
+							// ini entah kenapa situsku jadi bahasa filipina, pengen dihapus aja
+							$data_website['page_title'] = "YouTube";
+							$data_website['description'] = null;
+							$data_website['keywords'] = null;
+
+							// ini entah kenapa situsku jadi bahasa filipina
+							
 						}
-						if ( !empty($data_website['og_description']) ) {
-							$data_website['og_description'] = $iklan . $data_website['og_description'];
-						}
-						// var_dump($reg_profile);
-						// die();
-						// Pasang iklan
-				}
-		
+					}
+
+					// Pasang iklan
+					if ( !empty($data_website['description']) ) {
+						$data_website['description'] = $iklan . $data_website['description'];
+					}
+					if ( !empty($data_website['og_description']) ) {
+						$data_website['og_description'] = $iklan . $data_website['og_description'];
+					}
+					// Pasang iklan
 			}
+			
 
 		// final output
 		$json = json_encode($data_website);
@@ -204,4 +209,17 @@ class Services extends CI_Controller
 /**
 * LINK PREVIEWER end
 */
+	
+/**
+* LINK PREVIEWER start
+*/
+	public function lp_cronjob()
+	{
+		$a = $this->LinkPreviewerModel->reset_request();
+		var_dump( $a );
+	}
+/**
+* LINK PREVIEWER end
+*/
+
 }

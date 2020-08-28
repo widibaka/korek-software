@@ -61,7 +61,7 @@
             <span class="icon icon-bar"></span>
             <span class="icon icon-bar"></span>
           </button>
-          <a href="<?= base_url("assets/landing/"); ?>#" class="navbar-brand"><?= $website['website_name'] ?></a>
+          <a href="<?= base_url(); ?>#" class="navbar-brand"><?= $website['website_name'] ?></a>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right text-uppercase">
@@ -110,7 +110,7 @@
           <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.6s">
             <h2 class="text-uppercase"><?php echo $pd['title'] ?></h2>
             <p><?php echo $pd['description'] ?> </p>
-            <a href="<?php echo base_url("product/detail/" . $pd['id']) ?>" class="btn btn-primary text-uppercase">Selengkapnya</a>
+            <a href="<?php echo base_url("product/detail/" . $pd['id']) ?>" class="btn btn-primary text-uppercase">Download</a>
           </div>
           <div class="col-md-6 wow fadeInRight" data-wow-delay="0.6s">
             <img src="<?= base_url("assets/"); ?>koreksoft/product/<?php echo explode("; ", $pd['image'])[0] ?>" class="img-responsive" alt="feature img">
@@ -128,34 +128,16 @@
         <div class="container">
           <div class="row">
             <div class="col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-              <h2 class="text-uppercase">Contact Us</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. </p>
+              <h2 class="text-uppercase">Kontak</h2>
               <address>
-                <p><i class="fa fa-map-marker"></i>36 Street Name, City Name, United States</p>
-                <p><i class="fa fa-phone"></i> 010-010-0110 or 020-020-0220</p>
-                <p><i class="fa fa-envelope-o"></i> info@company.com</p>
+                <p><i class="fa fa-envelope-o"></i> widibaka55@gmail.com</p>
               </address>
             </div>
             <div class="col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-              <div class="contact-form">
-                <form action="#" method="post">
-                  <div class="col-md-6">
-                    <input type="text" class="form-control" placeholder="Name">
-                  </div>
-                  <div class="col-md-6">
-                    <input type="email" class="form-control" placeholder="Email">
-                  </div>
-                  <div class="col-md-12">
-                    <input type="text" class="form-control" placeholder="Subject">
-                  </div>
-                  <div class="col-md-12">
-                    <textarea class="form-control" placeholder="Message" rows="4"></textarea>
-                  </div>
-                  <div class="col-md-8">
-                    <input type="submit" class="form-control text-uppercase" value="Send">
-                  </div>
-                </form>
-              </div>
+              <h2 class="text-uppercase">About</h2>
+              <address>
+                <p><i class="fa fa-book"></i> <a href="<?php echo base_url('services/syarat_ketentuan') ?>" style="color: #FFFFFF; ">Syarat & Ketentuan</a></p>
+              </address>
             </div>
           </div>
         </div>

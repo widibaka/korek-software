@@ -191,6 +191,10 @@ class Auth extends CI_Controller {
 	}
 	public function mark_as_read($user_id, $redirect)
 	{
+	  if ( !$this->session->userdata("email") ) { // kalau session ga  ada
+	  	redirect( base_url("login") );
+	  }
+
 	  $this->KoreksoftModel->mark_as_read_notif( $user_id );
 
 	  $hapus = str_replace("http://", "", base_url());

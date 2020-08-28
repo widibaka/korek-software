@@ -1,5 +1,18 @@
         <link rel="stylesheet" href="<?php echo base_url("assets/") ?>plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 
+        <style type="text/css">
+          .blinking{
+              animation:blinkingText 1.2s infinite;
+          }
+          @keyframes blinkingText{
+              0%{     color: #000;    }
+              49%{    color: #000; }
+              60%{    color: transparent; }
+              99%{    color:transparent;  }
+              100%{   color: #000;    }
+          }
+        </style>
+
         <section class="content-header">
           <div class="container-fluid">
             <div class="row mb-2">
@@ -18,6 +31,12 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+                <div class="container mb-5 font-weight-bold">
+                  <span class="blinking"><i>Over here!</i></span><br>
+                  Silakan lakukan pembayaran sesuai tagihan ke rekening:<br>
+                  BRI : 674701009032537 (WIDI DWI NURCAHYO)<br>
+                  Paypal : widibaka55@gmail.com
+                </div>
                 <table id="order_table" class="table table-bordered table-hover">
                   <thead>
                   <tr>
@@ -225,7 +244,7 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  <a href="#" class="btn btn-primary">See How to use</a>
+                  <a href="http://koreksoft.online/lp_demo/user_manual/#line7" class="btn btn-primary">See How to use</a>
                 </div>
               </div>
             </form>

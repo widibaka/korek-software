@@ -358,7 +358,12 @@ class KoreksoftModel extends CI_Model
 
     	$data = explode( "@saparate@", $reg_profile );
     	$email = $data[0];
-    	$order_id = $data[1];
+    	if ( !empty($data[1]) ) {
+    		$order_id = $data[1];
+    	}
+    	else{
+    		$order_id = '';
+    	}
 
     	$order = $this->getOrderByOrderId( $order_id );
 
@@ -387,10 +392,9 @@ class KoreksoftModel extends CI_Model
     		$final_status['request_remains_valid'] = false;
     		$final_status['ketsuron'] = false;
 
-    	}else{ // kalo belum habis, kurangi
-    		// kurangi 
-    		$this->kurangi_kesempatan_request($order_id);
     	}
+    	// kurangi 
+    	$this->kurangi_kesempatan_request($order_id);
     	
 
     	return $final_status;
@@ -451,6 +455,10 @@ class KoreksoftModel extends CI_Model
 		$this->db->where('order_id', $order_id);
 		$result = $this->db->get('link_previewer');
 		$request_remains = $result->row_array()['request_remains'];
+
+		if ( !empty($request_remains) && $request_remains < -1000 ) { // kalo kurang dari minus 1000, jangan tampilkan!
+			die();
+		}
 		
 		if ( $request_remains < 1 ) {
 			return false;
@@ -519,7 +527,7 @@ class KoreksoftModel extends CI_Model
 		$result = $this->db->get('link_previewer');
 		$email_2 = $result->row_array()['email'];
 
-		if ( $email_2 == $email ) {
+		if ( !empty($email) && $email_2 == $email ) {
 			return true;
 		}
 		else{

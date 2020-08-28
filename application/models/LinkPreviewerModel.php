@@ -4,6 +4,26 @@ include_once APPPATH."libraries/Regex.php";
 
 class LinkPreviewerModel extends CI_Model
 {
+
+	public function reset_request()
+	{
+		// reset ke seribu
+		$this->db->where('jenis', 'public');
+		$this->db->update("link_previewer", [ "request_remains" => '1000' ]);
+		// reset ke seratus
+		$this->db->where('jenis', 'free');
+		$this->db->update("link_previewer", [ "request_remains" => '100' ]);
+		// reset ke 5000
+		$this->db->where('jenis', 'premium');
+		$this->db->update("link_previewer", [ "request_remains" => '5000' ]);
+
+		// ambil data
+		$this->db->where('jenis', 'public');
+		$result = $this->db->get('link_previewer');
+		return ($result->row_array());
+
+	}
+
     public function generate_random_string()
     {
     	$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';

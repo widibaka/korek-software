@@ -64,10 +64,10 @@
             <a class="nav-link" href="<?php echo base_url('jadwal/') ?>">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="<?php echo base_url('jadwal/kelas/') . $jurusan . "/" . $kelas . "/" ?>">Jadwal Hari Ini</a>
+            <a class="nav-link" href="<?php echo base_url('jadwal/dosen/') . $dosen ?>">Jadwal Hari Ini</a>
           </li>
           <li class="nav-item ">
-            <a class="nav-link" href="<?php echo base_url('jadwal/kelas/') . $jurusan . "/" . $kelas . "/semua" ?>">Jadwal Sepekan</a>
+            <a class="nav-link" href="<?php echo base_url('jadwal/dosen/') . $dosen . '/semua' ?>">Jadwal Sepekan</a>
           </li>
           <li class="nav-item">
             
@@ -148,8 +148,8 @@
                 <td id="mo_sifat"></td>
               </tr>
               <tr>
-                <th>Dosen </th>
-                <td id="mo_dosen"></td>
+                <th>Kelas </th>
+                <td id="mo_kelas"></td>
               </tr>
               <tr>
                 <th>Ruang </th>
@@ -174,11 +174,10 @@
     <script src="<?= base_url('assets/_jadwal') ?>/Offcanvas_files/offcanvas.js.download"></script>
 
     <script type="text/javascript">
-      var jurusan = '<?php echo $jurusan ?>';
+      var dosen = '<?php echo $dosen ?>';
       var jenis = '<?php echo $jenis ?>';
-      var kelas = '<?php echo $kelas ?>';
       function load_data() {
-        $.get("<?= base_url() ?>jadwal/get_jadwal/"+jurusan+"/"+kelas+"/"+jenis, function(data) {
+        $.get("<?= base_url() ?>jadwal/get_jadwal_dosen/"+dosen+"/"+jenis+"/", function(data) {
           $("#tabel-jadwal").html(data);
           $(".loader").hide();
         });
@@ -189,14 +188,14 @@
         let mata_kuliah = $('#tr-'+id+' .mata_kuliah').html();
         let sks = $('#tr-'+id+' .sks').html();
         let sifat = $('#tr-'+id+' .sifat').html();
-        let dosen = $('#tr-'+id+' .dosen').html();
+        let kelas = $('#tr-'+id+' .kelas').html();
         let ruang = $('#tr-'+id+' .ruang').html();
         $("#mo_hari").html(hari);
         $("#mo_jam").html(jam);
         $("#mo_mata_kuliah").html(mata_kuliah);
         $("#mo_sks").html(sks);
         $("#mo_sifat").html(sifat);
-        $("#mo_dosen").html(dosen);
+        $("#mo_kelas").html(kelas);
         $("#mo_ruang").html(ruang);
       }
       setInterval(function() {

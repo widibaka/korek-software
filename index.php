@@ -1,4 +1,5 @@
 <?php
+
 // widibaka
 date_default_timezone_set('Asia/Jakarta');
 
@@ -56,7 +57,7 @@ date_default_timezone_set('Asia/Jakarta');
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production');
+	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 
 /*
  *---------------------------------------------------------------

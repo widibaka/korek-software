@@ -1,50 +1,71 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Jadwal extends CI_Controller {
+class Jadwal_18a3 extends CI_Controller {
 
 	public function __construct()
 	{
 		parent::__construct();
+		$this->load->model('_18a3_model');
 
-	}
-
-	public function set_view_count()
-	{
-		$angka = file_get_contents("view.txt");
-		$myfile = fopen("view.txt", "w") or die("Unable to open file!");
-		$angka = $angka+1;
-
-		fwrite($myfile, $angka);
-		fclose($myfile);
 	}
 
 	public function index()
 	{
-		$this->set_view_count();
-		$data['title'] = "Jadwal Kuliah Fikom UDB";
-		$data['icon'] = "02.gif";
-		$jadwal = $this->db->get('_jadwal')->result_array();
-
-		$jurusan = [];
-
-		foreach ($jadwal as $key => $value) {
-			array_push($jurusan, strtoupper($value['jurusan']));
+		if ( $this->input->post() ) {
+			if ( $this->input->post('password') == '18a3#' ) {
+				$this->_18a3_model->set_jadwal( 
+					$this->input->post('jadwal_id'), 
+					$this->input->post('matakul_id'), 
+					$this->input->post('jenis'),
+					$this->input->post('jam'),
+					$this->input->post('hari')
+				);
+			}
+			else{
+				$this->session->set_flashdata("message", "<script>alert('Maaf, password salah!')</script>");
+				redirect( $this->uri->uri_string() ); //refresh
+			}
+			
 		}
+		$data['title'] = "Jadwal Khusus TI 18A3";
+		$data['icon'] = "nezuko.gif";
+		
+		$jadwal = $this->db->get('_jadwal_18a3')->result_array();
 
-		$data['jurusan'] = array_unique($jurusan);
+		$this->db->order_by('index_hari', 'ASC');
+		$hari = $this->db->get('_jadwal_18a3_hari')->result_array();
 
-		$this->load->view('_jadwal_index', $data);
+		$matakul = $this->db->get('_jadwal_18a3_matakul')->result_array();
+
+		$this->db->order_by('id', 'ASC');
+		$jam = $this->db->get('_jadwal_18a3_jam')->result_array();
+		
+		$data['hari'] = $hari;
+		$data['jam'] = $jam;
+		$data['jadwal'] = $jadwal;
+		$data['matakul'] = $matakul;
+
+
+		// var_dump($data['hari']);
+		// die();
+
+		$this->load->view('jadwal_18a3', $data);
 	}
 	//mahasiswa
 	public function kelas($jurusan = '', $kelas = '', $jenis = '')
 	{
-		$this->set_view_count();
+		
 		$data['title'] = "Jadwal " . strtoupper($kelas);
 		$data['icon'] = "02.gif";
 		$data['jurusan'] = $jurusan;
 		$data['jenis'] = $jenis;
 		$data['kelas'] = $kelas;
+
+
+
+
+
 
 		if ( !empty($kelas) ) {
 			$this->load->view('_jadwal', $data);
@@ -54,7 +75,7 @@ class Jadwal extends CI_Controller {
 
 	public function jurusan($jurusan = '')
 	{
-		$this->set_view_count();
+		
 		$data['title'] = "Jadwal Kuliah " . strtoupper($jurusan);
 		$data['icon'] = "02.gif";
 		$this->db->where("jurusan", $jurusan);
@@ -86,7 +107,7 @@ class Jadwal extends CI_Controller {
 	//dosen
 	public function dosen_index()
 	{
-		$this->set_view_count();
+		
 		$data['title'] = "Jadwal Dosen";
 		$data['icon'] = "miku0.gif";
 		$this->db->order_by("dosen", "ASC");
@@ -105,7 +126,7 @@ class Jadwal extends CI_Controller {
 
 	public function dosen($dosen = '' , $jenis = '' )
 	{
-		$this->set_view_count();
+		
 		$dosen_decoded = base64_decode(str_replace('garis_miring', '/', $dosen));
 		$data['title'] = "Jadwal " . $dosen_decoded;
 		$data['icon'] = "miku0.gif";
@@ -127,7 +148,7 @@ class Jadwal extends CI_Controller {
 	//ruangan
 	public function ruangan_index()
 	{
-		$this->set_view_count();
+		
 		$data['title'] = "Jadwal Ruangan";
 		$data['icon'] = "tamako.gif";
 		$this->db->order_by("index_hari", "ASC");
@@ -152,7 +173,7 @@ class Jadwal extends CI_Controller {
 
 	public function ruangan($index_hari_saat_ini = '', $ruangan_saat_ini = '')
 	{
-		$this->set_view_count();
+		
 		$data['title'] = "Jadwal Ruangan";
 		$data['icon'] = "tamako.gif";
 

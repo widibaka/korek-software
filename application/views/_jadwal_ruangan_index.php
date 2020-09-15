@@ -3,9 +3,17 @@
 <html lang="en"><link type="text/css" rel="stylesheet" id="dark-mode-general-link"><link type="text/css" rel="stylesheet" id="dark-mode-custom-link"><style type="text/css" id="dark-mode-custom-style"></style><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=0.8, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Jadwal yang enggak bikin mata pedih">
+    <meta name="author" content="widibaka">
     <link rel="icon" href="<?= base_url('assets/_jadwal/Offcanvas_files/'.$icon) ?>">
+    <!-- S:fb meta -->
+    <meta property="og:type" content="software" />
+    <meta property="og:image" content="<?= base_url('assets/_jadwal/Offcanvas_files/'.$icon) ?>" />
+    <meta property="og:title" content="<?php echo $title ?>" />
+    <meta property="og:description" content="Jadwal yang enggak bikin mata pedih">
+    <meta property="og:url" content="<?= base_url() ?>" />
+    <meta property="og:site_name" content="Koreksoft" />
+    <!-- e:fb meta -->
 
     <title><?php echo $title ?></title>
 
@@ -61,13 +69,7 @@
       <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="nav-link" href="<?php echo base_url('jadwal/') ?>">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="<?php echo base_url('jadwal/kelas/') . $jurusan . "/" . $kelas . "/" ?>">Jadwal Hari Ini</a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="<?php echo base_url('jadwal/kelas/') . $jurusan . "/" . $kelas . "/semua" ?>">Jadwal Sepekan</a>
+            <a class="nav-link" href="#" data-toggle="offcanvas">Pilih hari dan ruang!</a>
           </li>
           <li class="nav-item">
             
@@ -85,84 +87,39 @@
       <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-z2 rounded box-shadow">
         <img class="mr-3" src="<?= base_url('assets/_jadwal/Offcanvas_files/'.$icon) ?>" alt="" width="48" height="48">
         <div class="lh-100">
-          <h6 class="mb-0 text-white lh-100"><?php 
-                if ( empty($jenis) ) {
-                  echo "Ini jadwal untuk hari ini. Coba deh kamu tap jadwalnya.";
-                }
-                elseif ( $jenis == "semua" ) {
-                  echo "Ini jadwal untuk seminggu penuh.";
-                }
-           ?></h6>
+          <h6 class="mb-0 text-white lh-100">Pilih hari dan ruang dulu</h6>
           <small></small>
         </div>
       </div>
 
       <div class="my-3 p-3 bg-white rounded box-shadow">
 
-
-
-        <table class="table table-bordered text-secondary" id="tabel-jadwal">
-          <div class="text-center loader bg-abu-abu">
-            <img src="<?= base_url('assets/_jadwal') ?>/Offcanvas_files/ajax-loader.gif">
+        <div class="row">
+          <div class="mb-2 col-sm-12 col-md-6">
+            <select class="form-control" id="ruangan">
+              <?php foreach ($ruangan as $key => $value): ?>
+                <option value="<?php echo str_replace('/', 'garis_miring', base64_encode($value)) ?>"><?php echo $value ?></option>
+              <?php endforeach ?>
+            </select>
           </div>
-        </table>
-        <div class="text-muted">
-          <small>Makul akan menyala 15 menit sebelum memasuki jam kuliah</small>
+          
+
+          <div class="mb-2 col-sm-12 col-md-6">
+            <select class="form-control" id="hari">
+              <?php foreach ($hari[0] as $key => $value): ?>
+                <option value="<?php echo $hari[1][$key] ?>"><?php echo $value ?></option>
+              <?php endforeach ?>
+            </select>
+          </div>
         </div>
 
-
+        <button class="btn btn-primary col-12" id="cari_ruangan">Cari ruangan</button>
+        <div class="container mb-4"></div>
+        <small><p class="text-muted">Jumlah ruangan: <?php echo count($ruangan) ?>
+        <br>Jumlah hari: 6 (buat yang belum tahu)</p></small>
 
       </div>
     </main>
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Detail </h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <table class="table table-bordered">
-              <tr>
-                <th>Hari </th>
-                <td id="mo_hari"></td>
-              </tr>
-              <tr>
-                <th>Jam </th>
-                <td id="mo_jam"></td>
-              </tr>
-              <tr>
-                <th>Mata kuliah </th>
-                <td id="mo_mata_kuliah"></td>
-              </tr>
-              <tr>
-                <th>SKS </th>
-                <td id="mo_sks"></td>
-              </tr>
-              <tr>
-                <th>Sifat </th>
-                <td id="mo_sifat"></td>
-              </tr>
-              <tr>
-                <th>Dosen </th>
-                <td id="mo_dosen"></td>
-              </tr>
-              <tr>
-                <th>Ruang </th>
-                <td id="mo_ruang"></td>
-              </tr>
-            </table>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -174,34 +131,15 @@
     <script src="<?= base_url('assets/_jadwal') ?>/Offcanvas_files/offcanvas.js.download"></script>
 
     <script type="text/javascript">
-      var jurusan = '<?php echo $jurusan ?>';
-      var jenis = '<?php echo $jenis ?>';
-      var kelas = '<?php echo $kelas ?>';
-      function load_data() {
-        $.get("<?= base_url() ?>jadwal/get_jadwal/"+jurusan+"/"+kelas+"/"+jenis, function(data) {
-          $("#tabel-jadwal").html(data);
-          $(".loader").hide();
-        });
+      function submit() {
+          var ruangan = $('#ruangan').val();
+          var hari = $('#hari').val();
+
+          window.location.href = "<?php echo base_url() ?>jadwal/ruangan/"+hari+"/"+ruangan;
       }
-      function show_modal(id) {
-        let hari = $('#tr-'+id+' .hari').html();
-        let jam = $('#tr-'+id+' .jam').html();
-        let mata_kuliah = $('#tr-'+id+' .mata_kuliah').html();
-        let sks = $('#tr-'+id+' .sks').html();
-        let sifat = $('#tr-'+id+' .sifat').html();
-        let dosen = $('#tr-'+id+' .dosen').html();
-        let ruang = $('#tr-'+id+' .ruang').html();
-        $("#mo_hari").html(hari);
-        $("#mo_jam").html(jam);
-        $("#mo_mata_kuliah").html(mata_kuliah);
-        $("#mo_sks").html(sks);
-        $("#mo_sifat").html(sifat);
-        $("#mo_dosen").html(dosen);
-        $("#mo_ruang").html(ruang);
-      }
-      setInterval(function() {
-        load_data();
-      }, 2000)
+      $('#cari_ruangan').click(function() {
+        submit();
+      })
     </script>
   
 

@@ -63,11 +63,25 @@
           <li class="nav-item">
             <a class="nav-link" href="<?php echo base_url('jadwal/') ?>">Home</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="<?php echo base_url('jadwal/kelas/') . $jurusan . "/" . $kelas . "/" ?>">Jadwal Hari Ini</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <?php echo $hari_saat_ini ?>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <?php foreach ($hari[0] as $key => $value): ?>
+                <a class="dropdown-item" href="<?php echo base_url('jadwal/ruangan/') . $hari[1][$key] . '/' . $ruangan_saat_ini ?>"><?php echo $value ?></a>
+              <?php endforeach ?>
+            </div>
           </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="<?php echo base_url('jadwal/kelas/') . $jurusan . "/" . $kelas . "/semua" ?>">Jadwal Sepekan</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <?php echo base64_decode(str_replace('garis_miring', '/', $ruangan_saat_ini)); ?>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <?php foreach ($ruangan as $key => $value): ?>
+                <a class="dropdown-item" href="<?php echo base_url('jadwal/ruangan/') . $index_hari_saat_ini . '/' . str_replace('/', 'garis_miring', base64_encode($value)) ?>"><?php echo $value ?></a>
+              <?php endforeach ?>
+            </div>
           </li>
           <li class="nav-item">
             
@@ -86,12 +100,7 @@
         <img class="mr-3" src="<?= base_url('assets/_jadwal/Offcanvas_files/'.$icon) ?>" alt="" width="48" height="48">
         <div class="lh-100">
           <h6 class="mb-0 text-white lh-100"><?php 
-                if ( empty($jenis) ) {
-                  echo "Ini jadwal untuk hari ini. Coba deh kamu tap jadwalnya.";
-                }
-                elseif ( $jenis == "semua" ) {
-                  echo "Ini jadwal untuk seminggu penuh.";
-                }
+                echo "Ganti hari dan ruang pakai menu dropdown di atas ya.";
            ?></h6>
           <small></small>
         </div>
@@ -148,6 +157,10 @@
                 <td id="mo_sifat"></td>
               </tr>
               <tr>
+                <th>Kelas </th>
+                <td id="mo_kelas"></td>
+              </tr>
+              <tr>
                 <th>Dosen </th>
                 <td id="mo_dosen"></td>
               </tr>
@@ -174,11 +187,10 @@
     <script src="<?= base_url('assets/_jadwal') ?>/Offcanvas_files/offcanvas.js.download"></script>
 
     <script type="text/javascript">
-      var jurusan = '<?php echo $jurusan ?>';
-      var jenis = '<?php echo $jenis ?>';
-      var kelas = '<?php echo $kelas ?>';
+      var index_hari_saat_ini = '<?php echo $index_hari_saat_ini ?>';
+      var ruangan_saat_ini = '<?php echo $ruangan_saat_ini ?>';
       function load_data() {
-        $.get("<?= base_url() ?>jadwal/get_jadwal/"+jurusan+"/"+kelas+"/"+jenis, function(data) {
+        $.get("<?= base_url() ?>jadwal/get_jadwal_ruangan/"+index_hari_saat_ini+"/"+ruangan_saat_ini, function(data) {
           $("#tabel-jadwal").html(data);
           $(".loader").hide();
         });
@@ -186,17 +198,19 @@
       function show_modal(id) {
         let hari = $('#tr-'+id+' .hari').html();
         let jam = $('#tr-'+id+' .jam').html();
+        let dosen = $('#tr-'+id+' .dosen').html();
         let mata_kuliah = $('#tr-'+id+' .mata_kuliah').html();
         let sks = $('#tr-'+id+' .sks').html();
         let sifat = $('#tr-'+id+' .sifat').html();
-        let dosen = $('#tr-'+id+' .dosen').html();
+        let kelas = $('#tr-'+id+' .kelas').html();
         let ruang = $('#tr-'+id+' .ruang').html();
         $("#mo_hari").html(hari);
         $("#mo_jam").html(jam);
         $("#mo_mata_kuliah").html(mata_kuliah);
+        $("#mo_dosen").html(dosen);
         $("#mo_sks").html(sks);
         $("#mo_sifat").html(sifat);
-        $("#mo_dosen").html(dosen);
+        $("#mo_kelas").html(kelas);
         $("#mo_ruang").html(ruang);
       }
       setInterval(function() {
